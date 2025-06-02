@@ -18,7 +18,7 @@ async def policiescontrollerv1_getall() -> Dict[str, Any]:
         None
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing all RBAC policies.
+        Dict[str, Any]: The JSON response from the API call containing RBAC policies.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -75,7 +75,7 @@ async def policiescontrollerv1_post(body_name: str, body_statements: List[str]) 
         body_statements (List[str]): A list of statements defining the policy rules.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing details of the created policy or an error message.
+        Dict[str, Any]: The JSON response from the API call, containing details of the created policy.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -117,7 +117,7 @@ async def policiescontrollerv1_post(body_name: str, body_statements: List[str]) 
                       type: array
                       items:
                         type: string
-                      description: The statements of the created policy.
+                      description: The list of policy statements.
           '400':
             description: Bad Request
           '500':
@@ -160,47 +160,45 @@ async def policiescontrollerv1_post(body_name: str, body_statements: List[str]) 
 
 async def policiescontrollerv1_delete(body_id: str) -> Dict[str, Any]:
     '''
-    Deletes a policy identified by the given body_id.
+    Deletes a policy by its ID.
 
     Args:
-        body_id (str): The identifier of the policy to be deleted.
+        body_id (str): The ID of the policy to be deleted.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
+        Dict[str, Any]: The JSON response from the API call, which includes the status of the deletion.
 
     Raises:
         Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
-        delete:
-          summary: Delete a policy
-          description: Deletes a policy identified by the given body_id.
-          operationId: policiescontrollerv1_delete
-          parameters:
-            - name: body_id
-              in: path
-              required: true
-              description: The identifier of the policy to be deleted.
-              schema:
-                type: string
-          responses:
-            '200':
-              description: Successfully deleted the policy.
-              content:
-                application/json:
-                  schema:
-                    type: object
-                    properties:
-                      success:
-                        type: boolean
-                      message:
-                        type: string
-            '400':
-              description: Invalid body_id supplied.
-            '404':
-              description: Policy not found.
-            '500':
-              description: Internal server error.
+      delete:
+        summary: Delete a policy by ID
+        operationId: policiescontrollerv1_delete
+        parameters:
+          - name: body_id
+            in: path
+            required: true
+            description: The ID of the policy to be deleted
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Policy successfully deleted
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      description: Indicates if the deletion was successful
+          '400':
+            description: Invalid ID supplied
+          '404':
+            description: Policy not found
+          '500':
+            description: Internal server error
     '''
     logger.debug("Making DELETE request to /mgmt/v1/rbac/policies")
     params = {}

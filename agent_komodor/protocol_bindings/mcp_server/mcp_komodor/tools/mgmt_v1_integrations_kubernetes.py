@@ -12,20 +12,20 @@ logger = logging.getLogger("mcp_tools")
 
 async def clustercontroller_post(body_clusterName: str) -> Dict[str, Any]:
     '''
-    Posts a new cluster configuration to the Kubernetes integration endpoint.
+    Makes an asynchronous POST request to the Kubernetes integration endpoint.
 
     Args:
-        body_clusterName (str): The name of the cluster to be configured.
+        body_clusterName (str): The name of the cluster to be sent in the request body.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the operation.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
       post:
-        summary: Create a new Kubernetes cluster configuration
+        summary: Create or update a Kubernetes cluster integration.
         operationId: clustercontroller_post
         requestBody:
           content:
@@ -35,7 +35,7 @@ async def clustercontroller_post(body_clusterName: str) -> Dict[str, Any]:
                 properties:
                   clusterName:
                     type: string
-                    description: The name of the cluster to be configured.
+                    description: The name of the Kubernetes cluster.
                 required:
                   - clusterName
         responses:

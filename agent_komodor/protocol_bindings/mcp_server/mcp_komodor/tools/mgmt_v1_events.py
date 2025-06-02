@@ -24,62 +24,48 @@ async def eventscontroller_createcustomevent(body_eventType: str, body_summary: 
         body_details (Dict[str, Any], optional): Additional details about the event. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the event creation.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
-        paths:
-          /mgmt/v1/events:
-            post:
-              summary: Create a custom event
-              requestBody:
-                content:
-                  application/json:
-                    schema:
+        post:
+          summary: Create a custom event
+          operationId: eventscontroller_createcustomevent
+          requestBody:
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    eventType:
+                      type: string
+                    summary:
+                      type: string
+                    scope_clusters:
+                      type: array
+                      items:
+                        type: string
+                    scope_servicesNames:
+                      type: array
+                      items:
+                        type: string
+                    scope_namespaces:
+                      type: array
+                      items:
+                        type: string
+                    severity:
+                      type: string
+                    details:
                       type: object
-                      properties:
-                        eventType:
-                          type: string
-                          description: The type of the event.
-                        summary:
-                          type: string
-                          description: A brief summary of the event.
-                        scope_clusters:
-                          type: array
-                          items:
-                            type: string
-                          description: List of cluster identifiers.
-                        scope_servicesNames:
-                          type: array
-                          items:
-                            type: string
-                          description: List of service names.
-                        scope_namespaces:
-                          type: array
-                          items:
-                            type: string
-                          description: List of namespaces.
-                        severity:
-                          type: string
-                          description: The severity level of the event.
-                        details:
-                          type: object
-                          additionalProperties: true
-                          description: Additional details about the event.
-              responses:
-                '200':
-                  description: Successful response
-                  content:
-                    application/json:
-                      schema:
-                        type: object
-                        additionalProperties: true
-                '400':
-                  description: Bad request
-                '500':
-                  description: Internal server error
+          responses:
+            '200':
+              description: Successful response
+              content:
+                application/json:
+                  schema:
+                    type: object
     '''
     logger.debug("Making POST request to /mgmt/v1/events")
     params = {}

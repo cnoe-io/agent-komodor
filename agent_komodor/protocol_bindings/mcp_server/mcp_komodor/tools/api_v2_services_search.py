@@ -31,8 +31,7 @@ async def post_api_v2_services_search(body_scope: Dict[str, Any] = None, body_ki
     OpenAPI Specification:
         post:
           summary: Search for services based on the provided criteria.
-          description: |
-            Search for services based on the provided criteria. If no criteria is provided, the default is to return all services.
+          description: If no criteria is provided, the default is to return all services.
           requestBody:
             content:
               application/json:

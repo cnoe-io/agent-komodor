@@ -16,7 +16,7 @@ async def get_api_v2_clusters(param_clusterName: List[str] = None, param_tags: L
 
     Args:
         param_clusterName (List[str], optional): A list of cluster names to filter the results. Defaults to None.
-        param_tags (List[str], optional): A list of tags to filter the results. Defaults to None.
+        param_tags (List[str], optional): A list of tags to filter the clusters. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the list of clusters.
@@ -38,7 +38,7 @@ async def get_api_v2_clusters(param_clusterName: List[str] = None, param_tags: L
                   type: string
             - name: param_tags
               in: query
-              description: A list of tags to filter the results.
+              description: A list of tags to filter the clusters.
               required: false
               schema:
                 type: array

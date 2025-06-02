@@ -28,21 +28,21 @@ async def get_api_v2_users(param_displayName: str = None, param_email: str = Non
     OpenAPI Specification:
         get:
           summary: Retrieve a list of users.
-          description: Fetch users based on optional filters such as display name, email, and deletion status.
+          description: Fetches users based on optional filters such as display name, email, and deletion status.
           parameters:
-            - name: param_displayName
+            - name: displayName
               in: query
               description: The display name of the user.
               required: false
               schema:
                 type: string
-            - name: param_email
+            - name: email
               in: query
               description: The email of the user.
               required: false
               schema:
                 type: string
-            - name: param_isDeleted
+            - name: isDeleted
               in: query
               description: Filter users based on deletion status.
               required: false
@@ -123,6 +123,7 @@ async def post_api_v2_users(body_displayName: str, body_email: str, body_restore
           summary: Create a User
           operationId: postApiV2Users
           requestBody:
+            required: true
             content:
               application/json:
                 schema:
@@ -136,7 +137,7 @@ async def post_api_v2_users(body_displayName: str, body_email: str, body_restore
                       description: The email address of the user.
                     restoreIfDeleted:
                       type: boolean
-                      description: Flag to restore user if deleted.
+                      description: Flag to restore the user if deleted.
           responses:
             '200':
               description: Successful response

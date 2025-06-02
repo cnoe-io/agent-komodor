@@ -18,7 +18,7 @@ async def rbacusercontrollerv1_getall() -> Dict[str, Any]:
         None
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing user data.
+        Dict[str, Any]: The JSON response from the API call containing user details.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -37,11 +37,11 @@ async def rbacusercontrollerv1_getall() -> Dict[str, Any]:
                   additionalProperties:
                     type: object
           '400':
-            description: Bad request
+            description: Bad Request
           '401':
             description: Unauthorized
           '500':
-            description: Internal server error
+            description: Internal Server Error
     '''
     logger.debug("Making GET request to /mgmt/v1/rbac/users")
     params = {}

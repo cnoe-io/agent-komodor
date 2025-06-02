@@ -1,5 +1,5 @@
 
-"""Tools for /mgmt/v1/apikey/validate operations"""
+"""Tools for /mgmt/v1/integrations/kubernetes/{clustername} operations"""
 
 import logging
 from typing import Dict, Any
@@ -10,52 +10,60 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def apikeyscontroller_validate() -> Dict[str, Any]:
+async def clustercontroller_getbyclustername(path_clusterName: str) -> Dict[str, Any]:
     '''
-    Validates an API key by making a GET request to the API endpoint.
+    Fetches cluster information by cluster name.
 
     Args:
-        None
+        path_clusterName (str): The name of the cluster to retrieve information for.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing validation results.
+        Dict[str, Any]: The JSON response containing cluster details.
 
     Raises:
         Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
-      /mgmt/v1/apikey/validate:
         get:
-          summary: Validate API Key
-          description: Validates an API key by making a GET request to the API endpoint.
+          summary: Retrieve cluster information by cluster name.
+          operationId: clustercontroller_getbyclustername
+          parameters:
+            - name: path_clusterName
+              in: path
+              required: true
+              description: The name of the cluster.
+              schema:
+                type: string
           responses:
             '200':
-              description: Successful validation of the API key.
+              description: Successful response with cluster details.
               content:
                 application/json:
                   schema:
                     type: object
                     additionalProperties: true
-            '400':
-              description: Bad request due to invalid parameters.
-            '401':
-              description: Unauthorized access due to invalid API key.
+            '404':
+              description: Cluster not found.
             '500':
               description: Internal server error.
     '''
-    logger.debug("Making GET request to /mgmt/v1/apikey/validate")
+    logger.debug("Making GET request to /mgmt/v1/integrations/kubernetes/{clustername}")
     params = {}
     data = None
+    
+
     
 
 
     
     data = {}
 
+    
+
     if not data:
         data = None
     success, response = await make_api_request(
-        "/mgmt/v1/apikey/validate",
+        "/mgmt/v1/integrations/kubernetes/{clustername}",
         method="GET",
         params=params,
         data=data

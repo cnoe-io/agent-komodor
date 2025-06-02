@@ -15,14 +15,14 @@ async def getcostallocation(param_timeFrame: str, param_groupBy: str, param_page
     Get cost allocation breakdown.
 
     Args:
-        param_timeFrame (str): The time frame for the cost allocation data.
-        param_groupBy (str): The parameter to group the cost allocation data by.
+        param_timeFrame (str): The time frame for which the cost allocation is requested.
+        param_groupBy (str): The parameter by which to group the cost allocation data.
         param_pageSize (int): The number of records to return per page.
         param_clusterScope (List[str], optional): The scope of clusters to include in the cost allocation. Defaults to None.
-        param_filterBy (str, optional): The field to filter the cost allocation data by. Defaults to None.
+        param_filterBy (str, optional): The parameter to filter the cost allocation data by. Defaults to None.
         param_filterValueEquals (str, optional): The value to filter the cost allocation data by. Defaults to None.
-        param_sortOrder (str, optional): The order to sort the cost allocation data. Defaults to None.
-        param_sortBy (str, optional): The field to sort the cost allocation data by. Defaults to None.
+        param_sortOrder (str, optional): The order in which to sort the cost allocation data. Defaults to None.
+        param_sortBy (str, optional): The parameter by which to sort the cost allocation data. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the cost allocation breakdown.
@@ -37,13 +37,13 @@ async def getcostallocation(param_timeFrame: str, param_groupBy: str, param_page
             - name: param_timeFrame
               in: query
               required: true
-              description: The time frame for the cost allocation data.
+              description: The time frame for which the cost allocation is requested.
               schema:
                 type: string
             - name: param_groupBy
               in: query
               required: true
-              description: The parameter to group the cost allocation data by.
+              description: The parameter by which to group the cost allocation data.
               schema:
                 type: string
             - name: param_pageSize
@@ -63,7 +63,7 @@ async def getcostallocation(param_timeFrame: str, param_groupBy: str, param_page
             - name: param_filterBy
               in: query
               required: false
-              description: The field to filter the cost allocation data by.
+              description: The parameter to filter the cost allocation data by.
               schema:
                 type: string
             - name: param_filterValueEquals
@@ -75,13 +75,13 @@ async def getcostallocation(param_timeFrame: str, param_groupBy: str, param_page
             - name: param_sortOrder
               in: query
               required: false
-              description: The order to sort the cost allocation data.
+              description: The order in which to sort the cost allocation data.
               schema:
                 type: string
             - name: param_sortBy
               in: query
               required: false
-              description: The field to sort the cost allocation data by.
+              description: The parameter by which to sort the cost allocation data.
               schema:
                 type: string
           responses:

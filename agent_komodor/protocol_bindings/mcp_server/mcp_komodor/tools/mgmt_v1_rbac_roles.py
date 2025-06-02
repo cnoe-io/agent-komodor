@@ -84,7 +84,6 @@ async def rolescontrollerv1_post(body_name: str) -> Dict[str, Any]:
         summary: Create a new role
         operationId: rolescontrollerv1_post
         requestBody:
-          required: true
           content:
             application/json:
               schema:
@@ -93,6 +92,8 @@ async def rolescontrollerv1_post(body_name: str) -> Dict[str, Any]:
                   name:
                     type: string
                     description: The name of the role to be created.
+                required:
+                  - name
         responses:
           '200':
             description: Role created successfully
@@ -108,7 +109,7 @@ async def rolescontrollerv1_post(body_name: str) -> Dict[str, Any]:
                       type: string
                       description: The name of the created role.
           '400':
-            description: Bad request
+            description: Bad request, invalid input
           '500':
             description: Internal server error
     '''
@@ -149,7 +150,7 @@ async def rolescontrollerv1_delete(body_id: str) -> Dict[str, Any]:
         body_id (str): The ID of the role to be deleted.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
+        Dict[str, Any]: The JSON response from the API call, which includes the status of the deletion.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -173,9 +174,9 @@ async def rolescontrollerv1_delete(body_id: str) -> Dict[str, Any]:
                 schema:
                   type: object
                   properties:
-                    success:
-                      type: boolean
-                      description: Indicates if the deletion was successful
+                    message:
+                      type: string
+                      example: Role deleted successfully
           '400':
             description: Invalid ID supplied
           '404':

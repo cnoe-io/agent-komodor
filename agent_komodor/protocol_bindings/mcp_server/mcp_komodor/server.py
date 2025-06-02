@@ -32,17 +32,27 @@ from mcp_komodor.tools import api_v2_clusters
 
 from mcp_komodor.tools import api_v2_realtime_monitors_config
 
+from mcp_komodor.tools import api_v2_realtime_monitors_config_id
+
 from mcp_komodor.tools import api_v2_audit_log
 
 from mcp_komodor.tools import api_v2_audit_log_filters
 
 from mcp_komodor.tools import api_v2_health_risks
 
+from mcp_komodor.tools import api_v2_health_risks_id
+
 from mcp_komodor.tools import api_v2_users
+
+from mcp_komodor.tools import api_v2_users_id_or_email
 
 from mcp_komodor.tools import api_v2_users_effective_permissions
 
+from mcp_komodor.tools import api_v2_rbac_roles_id_or_name
+
 from mcp_komodor.tools import api_v2_rbac_policies
+
+from mcp_komodor.tools import api_v2_rbac_policies_id_or_name
 
 from mcp_komodor.tools import api_v2_cost_allocation
 
@@ -52,25 +62,47 @@ from mcp_komodor.tools import api_v2_cost_right_sizing_container
 
 from mcp_komodor.tools import api_v2_klaudia_rca_sessions
 
+from mcp_komodor.tools import api_v2_klaudia_rca_sessions_id
+
 from mcp_komodor.tools import mgmt_v1_apikey_validate
 
 from mcp_komodor.tools import mgmt_v1_events
 
 from mcp_komodor.tools import mgmt_v1_monitors_config
 
+from mcp_komodor.tools import mgmt_v1_monitors_config_id
+
 from mcp_komodor.tools import mgmt_v1_rbac_roles
+
+from mcp_komodor.tools import mgmt_v1_rbac_roles_id
+
+from mcp_komodor.tools import mgmt_v1_rbac_roles_id_policies
 
 from mcp_komodor.tools import mgmt_v1_rbac_roles_policies
 
 from mcp_komodor.tools import mgmt_v1_rbac_policies
 
+from mcp_komodor.tools import mgmt_v1_rbac_policies_id
+
 from mcp_komodor.tools import mgmt_v1_rbac_users
+
+from mcp_komodor.tools import mgmt_v1_rbac_users_id
+
+from mcp_komodor.tools import mgmt_v1_rbac_users_id_roles
 
 from mcp_komodor.tools import mgmt_v1_rbac_users_roles
 
 from mcp_komodor.tools import mgmt_v1_integrations_kubernetes
 
+from mcp_komodor.tools import mgmt_v1_integrations_kubernetes_id
+
+from mcp_komodor.tools import mgmt_v1_integrations_kubernetes_clustername
+
 from mcp_komodor.tools import mgmt_v1_rbac_actions
+
+from mcp_komodor.tools import mgmt_v1_rbac_actions_action
+
+from mcp_komodor.tools import mgmt_v1_rbac_actions_id
 
 
 def main():
@@ -142,6 +174,14 @@ def main():
 
     mcp.tool()(api_v2_realtime_monitors_config.post_api_v2_realtime_monitors_config)
 
+    # Register api_v2_realtime_monitors_config_id tools
+
+    mcp.tool()(api_v2_realtime_monitors_config_id.get_api_v2_realtime_monitors_config_id)
+
+    mcp.tool()(api_v2_realtime_monitors_config_id.put_api_v2_realtime_monitors_config_id)
+
+    mcp.tool()(api_v2_realtime_monitors_config_id.delete_api_v2_realtime_monitors_config_id)
+
     # Register api_v2_audit_log tools
 
     mcp.tool()(api_v2_audit_log.get_api_v2_audit_log)
@@ -154,19 +194,49 @@ def main():
 
     mcp.tool()(api_v2_health_risks.gethealthrisks)
 
+    # Register api_v2_health_risks_id tools
+
+    mcp.tool()(api_v2_health_risks_id.gethealthriskdata)
+
+    mcp.tool()(api_v2_health_risks_id.updatehealthriskstatus)
+
     # Register api_v2_users tools
 
     mcp.tool()(api_v2_users.get_api_v2_users)
 
     mcp.tool()(api_v2_users.post_api_v2_users)
 
+    # Register api_v2_users_id_or_email tools
+
+    mcp.tool()(api_v2_users_id_or_email.get_api_v2_users_id_or_email)
+
+    mcp.tool()(api_v2_users_id_or_email.put_api_v2_users_id_or_email)
+
+    mcp.tool()(api_v2_users_id_or_email.delete_api_v2_users_id_or_email)
+
     # Register api_v2_users_effective_permissions tools
 
     mcp.tool()(api_v2_users_effective_permissions.get_api_v2_users_effective_permissions)
 
+    # Register api_v2_rbac_roles_id_or_name tools
+
+    mcp.tool()(api_v2_rbac_roles_id_or_name.get_api_v2_rbac_roles_id_or_name)
+
+    mcp.tool()(api_v2_rbac_roles_id_or_name.put_api_v2_rbac_roles_id_or_name)
+
+    mcp.tool()(api_v2_rbac_roles_id_or_name.delete_api_v2_rbac_roles_id_or_name)
+
     # Register api_v2_rbac_policies tools
 
     mcp.tool()(api_v2_rbac_policies.post_api_v2_rbac_policies)
+
+    # Register api_v2_rbac_policies_id_or_name tools
+
+    mcp.tool()(api_v2_rbac_policies_id_or_name.get_api_v2_rbac_policies_id_or_name)
+
+    mcp.tool()(api_v2_rbac_policies_id_or_name.put_api_v2_rbac_policies_id_or_name)
+
+    mcp.tool()(api_v2_rbac_policies_id_or_name.delete_api_v2_rbac_policies_id_or_name)
 
     # Register api_v2_cost_allocation tools
 
@@ -184,6 +254,10 @@ def main():
 
     mcp.tool()(api_v2_klaudia_rca_sessions.triggerklaudiarca)
 
+    # Register api_v2_klaudia_rca_sessions_id tools
+
+    mcp.tool()(api_v2_klaudia_rca_sessions_id.getklaudiarcaresults)
+
     # Register mgmt_v1_apikey_validate tools
 
     mcp.tool()(mgmt_v1_apikey_validate.apikeyscontroller_validate)
@@ -198,6 +272,14 @@ def main():
 
     mcp.tool()(mgmt_v1_monitors_config.monitorscontrollerv1_post)
 
+    # Register mgmt_v1_monitors_config_id tools
+
+    mcp.tool()(mgmt_v1_monitors_config_id.monitorscontrollerv1_get)
+
+    mcp.tool()(mgmt_v1_monitors_config_id.monitorscontrollerv1_put)
+
+    mcp.tool()(mgmt_v1_monitors_config_id.monitorscontrollerv1_delete)
+
     # Register mgmt_v1_rbac_roles tools
 
     mcp.tool()(mgmt_v1_rbac_roles.rolescontrollerv1_getall)
@@ -205,6 +287,14 @@ def main():
     mcp.tool()(mgmt_v1_rbac_roles.rolescontrollerv1_post)
 
     mcp.tool()(mgmt_v1_rbac_roles.rolescontrollerv1_delete)
+
+    # Register mgmt_v1_rbac_roles_id tools
+
+    mcp.tool()(mgmt_v1_rbac_roles_id.rolescontrollerv1_get)
+
+    # Register mgmt_v1_rbac_roles_id_policies tools
+
+    mcp.tool()(mgmt_v1_rbac_roles_id_policies.rbacrolepoliciescontrollerv1_get)
 
     # Register mgmt_v1_rbac_roles_policies tools
 
@@ -220,9 +310,23 @@ def main():
 
     mcp.tool()(mgmt_v1_rbac_policies.policiescontrollerv1_delete)
 
+    # Register mgmt_v1_rbac_policies_id tools
+
+    mcp.tool()(mgmt_v1_rbac_policies_id.policiescontrollerv1_get)
+
+    mcp.tool()(mgmt_v1_rbac_policies_id.policiescontrollerv1_updatepolicy)
+
     # Register mgmt_v1_rbac_users tools
 
     mcp.tool()(mgmt_v1_rbac_users.rbacusercontrollerv1_getall)
+
+    # Register mgmt_v1_rbac_users_id tools
+
+    mcp.tool()(mgmt_v1_rbac_users_id.rbacusercontrollerv1_get)
+
+    # Register mgmt_v1_rbac_users_id_roles tools
+
+    mcp.tool()(mgmt_v1_rbac_users_id_roles.rbacuserrolescontrollerv1_get)
 
     # Register mgmt_v1_rbac_users_roles tools
 
@@ -234,11 +338,29 @@ def main():
 
     mcp.tool()(mgmt_v1_integrations_kubernetes.clustercontroller_post)
 
+    # Register mgmt_v1_integrations_kubernetes_id tools
+
+    mcp.tool()(mgmt_v1_integrations_kubernetes_id.clustercontroller_delete)
+
+    # Register mgmt_v1_integrations_kubernetes_clustername tools
+
+    mcp.tool()(mgmt_v1_integrations_kubernetes_clustername.clustercontroller_getbyclustername)
+
     # Register mgmt_v1_rbac_actions tools
 
     mcp.tool()(mgmt_v1_rbac_actions.actionscontrollerv1_getall)
 
     mcp.tool()(mgmt_v1_rbac_actions.actionscontrollerv1_post)
+
+    # Register mgmt_v1_rbac_actions_action tools
+
+    mcp.tool()(mgmt_v1_rbac_actions_action.actionscontrollerv1_get)
+
+    # Register mgmt_v1_rbac_actions_id tools
+
+    mcp.tool()(mgmt_v1_rbac_actions_id.actionscontrollerv1_delete)
+
+    mcp.tool()(mgmt_v1_rbac_actions_id.actionscontrollerv1_update)
 
 
     # Run the MCP server

@@ -42,7 +42,7 @@ async def post_api_v2_rbac_policies(body_name: str, body_statements: List[str]) 
                       type: array
                       items:
                         type: string
-                      description: The list of policy statements.
+                      description: The policy statements.
           responses:
             '200':
               description: Successful response
@@ -61,7 +61,7 @@ async def post_api_v2_rbac_policies(body_name: str, body_statements: List[str]) 
                         type: array
                         items:
                           type: string
-                        description: The list of policy statements.
+                        description: The statements of the created policy.
             '400':
               description: Bad Request
             '500':

@@ -26,7 +26,7 @@ async def get_api_v2_audit_log_filters(param_startTime: str = None, param_endTim
 
     OpenAPI Specification:
         get:
-          summary: Get available filter values for Query Audit Logs
+          summary: Retrieve available filter values for audit logs.
           operationId: getApiV2AuditLogFilters
           parameters:
             - name: param_startTime
@@ -48,8 +48,7 @@ async def get_api_v2_audit_log_filters(param_startTime: str = None, param_endTim
                 application/json:
                   schema:
                     type: object
-                    additionalProperties:
-                      type: string
+                    additionalProperties: true
             '400':
               description: Bad request due to invalid parameters.
             '500':

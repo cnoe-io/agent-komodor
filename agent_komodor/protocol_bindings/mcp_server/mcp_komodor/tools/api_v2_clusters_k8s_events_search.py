@@ -48,7 +48,7 @@ async def post_api_v2_clusters_k8s_events_search(body: str) -> Dict[str, Any]:
                     type: object
                     additionalProperties: true
             '400':
-              description: Bad request due to invalid input.
+              description: Bad request due to invalid parameters.
             '500':
               description: Internal server error.
     '''

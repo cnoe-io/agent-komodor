@@ -12,55 +12,53 @@ logger = logging.getLogger("mcp_tools")
 
 async def rbacrolepoliciescontrollerv1_post(body_roleId: str, body_policyId: str) -> Dict[str, Any]:
     '''
-    Creates a new role-policy association in the RBAC system.
+    Creates a new RBAC role policy association by making a POST request to the specified endpoint.
 
     Args:
-        body_roleId (str): The ID of the role to associate with a policy.
-        body_policyId (str): The ID of the policy to associate with a role.
+        body_roleId (str): The ID of the role to associate with the policy.
+        body_policyId (str): The ID of the policy to associate with the role.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing details of the created association.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the role-policy association.
 
     Raises:
         Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
-      post:
-        summary: Create a new role-policy association
-        operationId: rbacrolepoliciescontrollerv1_post
-        requestBody:
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  roleId:
-                    type: string
-                    description: The ID of the role.
-                  policyId:
-                    type: string
-                    description: The ID of the policy.
-                required:
-                  - roleId
-                  - policyId
-        responses:
-          '200':
-            description: Successful response
+        post:
+          summary: Create a new RBAC role policy association.
+          operationId: rbacrolepoliciescontrollerv1_post
+          requestBody:
+            required: true
             content:
               application/json:
                 schema:
                   type: object
                   properties:
-                    success:
-                      type: boolean
-                      description: Indicates if the operation was successful.
-                    data:
-                      type: object
-                      description: Details of the created association.
-          '400':
-            description: Bad request
-          '500':
-            description: Internal server error
+                    roleId:
+                      type: string
+                      description: The ID of the role.
+                    policyId:
+                      type: string
+                      description: The ID of the policy.
+          responses:
+            '200':
+              description: Successful operation
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        description: Indicates if the operation was successful.
+                      data:
+                        type: object
+                        description: Contains the details of the role-policy association.
+            '400':
+              description: Bad Request
+            '500':
+              description: Internal Server Error
     '''
     logger.debug("Making POST request to /mgmt/v1/rbac/roles/policies")
     params = {}
@@ -117,15 +115,15 @@ async def rbacrolepoliciescontrollerv1_delete(body_roleId: str, body_policyId: s
           operationId: rbacrolepoliciescontrollerv1_delete
           parameters:
             - name: body_roleId
-              in: body
+              in: query
               required: true
-              description: The ID of the role from which the policy will be deleted.
+              description: The ID of the role.
               schema:
                 type: string
             - name: body_policyId
-              in: body
+              in: query
               required: true
-              description: The ID of the policy to be deleted from the role.
+              description: The ID of the policy.
               schema:
                 type: string
           responses:
@@ -141,7 +139,16 @@ async def rbacrolepoliciescontrollerv1_delete(body_roleId: str, body_policyId: s
                       message:
                         type: string
             '400':
-              description: Bad request due to invalid role or policy ID.
+              description: Bad request, invalid role or policy ID.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      error:
+                        type: string
+            '404':
+              description: Role or policy not found.
               content:
                 application/json:
                   schema:

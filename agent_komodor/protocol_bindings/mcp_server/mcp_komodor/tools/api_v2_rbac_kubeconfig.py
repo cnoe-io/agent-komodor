@@ -24,30 +24,30 @@ async def get_api_v2_rbac_kubeconfig(param_clusterName: List[str] = None) -> Dic
         Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
-      get:
-        summary: Download Kubeconfig File
-        description: Download a kubeconfig file for the specified cluster names. If no cluster names are specified, the kubeconfig file for all available clusters will be returned.
-        parameters:
-          - name: param_clusterName
-            in: query
-            description: A list of cluster names for which to download the kubeconfig file.
-            required: false
-            schema:
-              type: array
-              items:
-                type: string
-        responses:
-          '200':
-            description: Successful response with kubeconfig file data.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  additionalProperties: true
-          '400':
-            description: Bad request due to invalid parameters.
-          '500':
-            description: Internal server error.
+        get:
+          summary: Download Kubeconfig File
+          description: Download a kubeconfig file for the specified cluster names. If no cluster names are specified, the kubeconfig file for all available clusters will be returned.
+          parameters:
+            - name: param_clusterName
+              in: query
+              description: A list of cluster names for which to download the kubeconfig file.
+              required: false
+              schema:
+                type: array
+                items:
+                  type: string
+          responses:
+            '200':
+              description: Successful response containing the kubeconfig file data.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    additionalProperties: true
+            '400':
+              description: Bad request due to invalid parameters.
+            '500':
+              description: Internal server error.
     '''
     logger.debug("Making GET request to /api/v2/rbac/kubeconfig")
     params = {}

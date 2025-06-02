@@ -15,16 +15,16 @@ async def getcostrightsizingperservice(param_optimizationStrategy: str, param_pa
     Get cost right-sizing recommendations per service.
 
     Args:
-        param_optimizationStrategy (str): The strategy to use for optimization.
+        param_optimizationStrategy (str): The strategy to use for optimization, such as 'cost' or 'performance'.
         param_pageSize (int): The number of results to return per page.
         param_filterBy (str, optional): The field to filter results by. Defaults to None.
-        param_filterValueEquals (str, optional): The value to filter the field by. Defaults to None.
-        param_sortOrder (str, optional): The order to sort results in. Defaults to None.
+        param_filterValueEquals (str, optional): The value to filter the specified field by. Defaults to None.
+        param_sortOrder (str, optional): The order to sort results by, either 'asc' or 'desc'. Defaults to None.
         param_sortBy (str, optional): The field to sort results by. Defaults to None.
-        param_clusterScope (List[str], optional): The scope of clusters to consider. Defaults to None.
+        param_clusterScope (List[str], optional): A list of cluster identifiers to scope the results to. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the right-sizing recommendations.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -73,7 +73,7 @@ async def getcostrightsizingperservice(param_optimizationStrategy: str, param_pa
                   type: string
           responses:
             '200':
-              description: Successful response with recommendations.
+              description: Successful response with right-sizing recommendations.
               content:
                 application/json:
                   schema:

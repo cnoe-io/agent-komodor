@@ -1,5 +1,5 @@
 
-"""Tools for /mgmt/v1/apikey/validate operations"""
+"""Tools for /mgmt/v1/rbac/actions/{action} operations"""
 
 import logging
 from typing import Dict, Any
@@ -10,52 +10,60 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def apikeyscontroller_validate() -> Dict[str, Any]:
+async def actionscontrollerv1_get(path_action: str) -> Dict[str, Any]:
     '''
-    Validates an API key by making a GET request to the API endpoint.
+    Fetches the details of a specific action from the RBAC actions controller.
 
     Args:
-        None
+        path_action (str): The identifier for the action to be retrieved.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing validation results.
+        Dict[str, Any]: The JSON response containing the details of the specified action.
 
     Raises:
         Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
-      /mgmt/v1/apikey/validate:
         get:
-          summary: Validate API Key
-          description: Validates an API key by making a GET request to the API endpoint.
+          summary: Retrieve details of a specific RBAC action.
+          operationId: actionscontrollerv1_get
+          parameters:
+            - name: path_action
+              in: path
+              required: true
+              description: The identifier for the action to be retrieved.
+              schema:
+                type: string
           responses:
             '200':
-              description: Successful validation of the API key.
+              description: Successful retrieval of action details.
               content:
                 application/json:
                   schema:
                     type: object
                     additionalProperties: true
-            '400':
-              description: Bad request due to invalid parameters.
-            '401':
-              description: Unauthorized access due to invalid API key.
+            '404':
+              description: Action not found.
             '500':
               description: Internal server error.
     '''
-    logger.debug("Making GET request to /mgmt/v1/apikey/validate")
+    logger.debug("Making GET request to /mgmt/v1/rbac/actions/{action}")
     params = {}
     data = None
+    
+
     
 
 
     
     data = {}
 
+    
+
     if not data:
         data = None
     success, response = await make_api_request(
-        "/mgmt/v1/apikey/validate",
+        f"/mgmt/v1/rbac/actions/{path_action}",
         method="GET",
         params=params,
         data=data

@@ -12,24 +12,24 @@ logger = logging.getLogger("mcp_tools")
 
 async def actionscontrollerv1_getall() -> Dict[str, Any]:
     '''
-    Fetches all RBAC actions from the management API.
+    Fetches all actions from the RBAC management API.
 
     Args:
         None
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing RBAC actions.
+        Dict[str, Any]: The JSON response from the API call containing all actions.
 
     Raises:
         Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
         get:
-          summary: Retrieve all RBAC actions
+          summary: Retrieve all actions
           operationId: actionscontrollerv1_getall
           responses:
             '200':
-              description: A list of RBAC actions
+              description: A list of actions
               content:
                 application/json:
                   schema:
@@ -71,9 +71,9 @@ async def actionscontrollerv1_post(body_action: str, body_description: str, body
     Makes an asynchronous POST request to the /mgmt/v1/rbac/actions endpoint.
 
     Args:
-        body_action (str): The action to be performed, corresponding to the 'body_action' parameter.
-        body_description (str): A description of the action, corresponding to the 'body_description' parameter.
-        body_k8sRuleset (List[str]): A list of Kubernetes rulesets, corresponding to the 'body_k8sRuleset' parameter.
+        body_action (str): The action to be performed, corresponding to the OpenAPI parameter 'body_action'.
+        body_description (str): A description of the action, corresponding to the OpenAPI parameter 'body_description'.
+        body_k8sRuleset (List[str]): A list of Kubernetes rulesets, corresponding to the OpenAPI parameter 'body_k8sRuleset'.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
@@ -106,16 +106,16 @@ async def actionscontrollerv1_post(body_action: str, body_description: str, body
                           description: A list of Kubernetes rulesets.
               responses:
                 '200':
-                  description: Successful operation
+                  description: Successful response
                   content:
                     application/json:
                       schema:
                         type: object
                         additionalProperties: true
                 '400':
-                  description: Invalid input
+                  description: Bad Request
                 '500':
-                  description: Server error
+                  description: Internal Server Error
     '''
     logger.debug("Making POST request to /mgmt/v1/rbac/actions")
     params = {}

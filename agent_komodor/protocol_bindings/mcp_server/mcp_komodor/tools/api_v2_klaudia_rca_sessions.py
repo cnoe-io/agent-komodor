@@ -15,10 +15,10 @@ async def triggerklaudiarca(body_kind: str, body_name: str, body_namespace: str,
     Trigger a new RCA investigation.
 
     Args:
-        body_kind (str): The kind of the body to investigate.
-        body_name (str): The name of the body to investigate.
-        body_namespace (str): The namespace of the body to investigate.
-        body_clusterName (str): The cluster name where the body resides.
+        body_kind (str): The kind of the resource to investigate.
+        body_name (str): The name of the resource to investigate.
+        body_namespace (str): The namespace of the resource to investigate.
+        body_clusterName (str): The name of the cluster where the resource is located.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
@@ -38,16 +38,16 @@ async def triggerklaudiarca(body_kind: str, body_name: str, body_namespace: str,
                 properties:
                   kind:
                     type: string
-                    description: The kind of the body to investigate.
+                    description: The kind of the resource to investigate.
                   name:
                     type: string
-                    description: The name of the body to investigate.
+                    description: The name of the resource to investigate.
                   namespace:
                     type: string
-                    description: The namespace of the body to investigate.
+                    description: The namespace of the resource to investigate.
                   clusterName:
                     type: string
-                    description: The cluster name where the body resides.
+                    description: The name of the cluster where the resource is located.
                 required:
                   - kind
                   - name
@@ -60,7 +60,6 @@ async def triggerklaudiarca(body_kind: str, body_name: str, body_namespace: str,
               application/json:
                 schema:
                   type: object
-                  additionalProperties: true
           '400':
             description: Bad request
           '500':

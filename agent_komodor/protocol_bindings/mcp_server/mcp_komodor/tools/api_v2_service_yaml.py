@@ -12,13 +12,13 @@ logger = logging.getLogger("mcp_tools")
 
 async def get_api_v2_service_yaml(param_cluster: str, param_namespace: str, param_kind: str, param_name: str) -> Dict[str, Any]:
     '''
-    Get service YAML.
+    Get the YAML for a service.
 
     Args:
         param_cluster (str): The cluster identifier for the service.
-        param_namespace (str): The namespace within the cluster.
+        param_namespace (str): The namespace in which the service resides.
         param_kind (str): The kind of the service resource.
-        param_name (str): The name of the service resource.
+        param_name (str): The name of the service.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the service YAML.
@@ -27,47 +27,44 @@ async def get_api_v2_service_yaml(param_cluster: str, param_namespace: str, para
         Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
-        paths:
-          /api/v2/service/yaml:
-            get:
-              summary: Retrieve the YAML for a specified service.
-              parameters:
-                - name: cluster
-                  in: query
-                  required: true
+        get:
+          summary: Get the YAML for a service
+          parameters:
+            - name: param_cluster
+              in: query
+              required: true
+              schema:
+                type: string
+              description: The cluster identifier for the service.
+            - name: param_namespace
+              in: query
+              required: true
+              schema:
+                type: string
+              description: The namespace in which the service resides.
+            - name: param_kind
+              in: query
+              required: true
+              schema:
+                type: string
+              description: The kind of the service resource.
+            - name: param_name
+              in: query
+              required: true
+              schema:
+                type: string
+              description: The name of the service.
+          responses:
+            '200':
+              description: Successful response with the service YAML.
+              content:
+                application/json:
                   schema:
-                    type: string
-                  description: The cluster identifier for the service.
-                - name: namespace
-                  in: query
-                  required: true
-                  schema:
-                    type: string
-                  description: The namespace within the cluster.
-                - name: kind
-                  in: query
-                  required: true
-                  schema:
-                    type: string
-                  description: The kind of the service resource.
-                - name: name
-                  in: query
-                  required: true
-                  schema:
-                    type: string
-                  description: The name of the service resource.
-              responses:
-                '200':
-                  description: Successful retrieval of service YAML.
-                  content:
-                    application/json:
-                      schema:
-                        type: object
-                        additionalProperties: true
-                '400':
-                  description: Bad request due to invalid parameters.
-                '500':
-                  description: Internal server error.
+                    type: object
+            '400':
+              description: Bad request due to invalid parameters.
+            '500':
+              description: Internal server error.
     '''
     logger.debug("Making GET request to /api/v2/service/yaml")
     params = {}

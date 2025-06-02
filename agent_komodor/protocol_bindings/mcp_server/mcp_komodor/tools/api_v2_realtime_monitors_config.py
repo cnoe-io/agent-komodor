@@ -12,7 +12,7 @@ logger = logging.getLogger("mcp_tools")
 
 async def get_api_v2_realtime_monitors_config() -> Dict[str, Any]:
     '''
-    Fetches the configuration for real-time monitors from the API v2 endpoint.
+    Fetches the configuration for real-time monitors from the API.
 
     Args:
         None
@@ -24,23 +24,23 @@ async def get_api_v2_realtime_monitors_config() -> Dict[str, Any]:
         Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
-        get:
-          summary: Retrieve real-time monitors configuration
-          operationId: getApiV2RealtimeMonitorsConfig
-          responses:
-            '200':
-              description: Successful response with configuration details
-              content:
-                application/json:
-                  schema:
-                    type: object
-                    additionalProperties: true
-            '400':
-              description: Bad request
-            '401':
-              description: Unauthorized
-            '500':
-              description: Internal server error
+      get:
+        summary: Retrieve real-time monitors configuration
+        operationId: getApiV2RealtimeMonitorsConfig
+        responses:
+          '200':
+            description: Successful response with configuration details
+            content:
+              application/json:
+                schema:
+                  type: object
+                  additionalProperties: true
+          '400':
+            description: Bad request
+          '401':
+            description: Unauthorized
+          '500':
+            description: Internal server error
     '''
     logger.debug("Making GET request to /api/v2/realtime-monitors/config")
     params = {}
@@ -67,16 +67,16 @@ async def get_api_v2_realtime_monitors_config() -> Dict[str, Any]:
 
 async def post_api_v2_realtime_monitors_config(body_sensors: List[str], body_type: str, body_name: str = None, body_sinks: Dict[str, Any] = None, body_active: bool = None, body_variables: Dict[str, Any] = None, body_sinksOptions: Dict[str, Any] = None) -> Dict[str, Any]:
     '''
-    Posts a configuration for real-time monitors to the API.
+    Posts configuration data to the realtime monitors API.
 
     Args:
-        body_sensors (List[str]): A list of sensor identifiers.
-        body_type (str): The type of the monitor configuration.
-        body_name (str, optional): The name of the monitor configuration. Defaults to None.
-        body_sinks (Dict[str, Any], optional): The sinks configuration. Defaults to None.
+        body_sensors (List[str]): List of sensor identifiers.
+        body_type (str): Type of the monitor configuration.
+        body_name (str, optional): Name of the monitor configuration. Defaults to None.
+        body_sinks (Dict[str, Any], optional): Configuration for data sinks. Defaults to None.
         body_active (bool, optional): Indicates if the monitor is active. Defaults to None.
         body_variables (Dict[str, Any], optional): Variables associated with the monitor. Defaults to None.
-        body_sinksOptions (Dict[str, Any], optional): Options for the sinks. Defaults to None.
+        body_sinksOptions (Dict[str, Any], optional): Options for the data sinks. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
@@ -86,7 +86,7 @@ async def post_api_v2_realtime_monitors_config(body_sensors: List[str], body_typ
 
     OpenAPI Specification:
         post:
-          summary: Posts a configuration for real-time monitors.
+          summary: Posts configuration data to the realtime monitors API.
           operationId: postApiV2RealtimeMonitorsConfig
           requestBody:
             content:
@@ -118,9 +118,9 @@ async def post_api_v2_realtime_monitors_config(body_sensors: List[str], body_typ
                   schema:
                     type: object
             '400':
-              description: Bad request
+              description: Bad Request
             '500':
-              description: Internal server error
+              description: Internal Server Error
     '''
     logger.debug("Making POST request to /api/v2/realtime-monitors/config")
     params = {}

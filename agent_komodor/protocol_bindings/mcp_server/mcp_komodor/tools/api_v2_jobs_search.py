@@ -15,10 +15,10 @@ async def post_api_v2_jobs_search(body_scope: Dict[str, Any] = None, body_types:
     Search for jobs and cron jobs.
 
     Args:
-        body_scope (Dict[str, Any], optional): Specifies the scope of the jobs to search. Defaults to None.
-        body_types (List[str], optional): Specifies the types of jobs to search. Defaults to None.
-        body_status (str, optional): Specifies the status of the jobs to search. Defaults to None.
-        body_pagination (Dict[str, Any], optional): Specifies pagination details for the search results. Defaults to None.
+        body_scope (Dict[str, Any], optional): The scope of the jobs to search for. Defaults to None.
+        body_types (List[str], optional): The types of jobs to include in the search. Defaults to None.
+        body_status (str, optional): The status of the jobs to filter by. Defaults to None.
+        body_pagination (Dict[str, Any], optional): Pagination details for the search results. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the search results.
@@ -28,8 +28,8 @@ async def post_api_v2_jobs_search(body_scope: Dict[str, Any] = None, body_types:
 
     OpenAPI Specification:
         post:
-          summary: Search for jobs based on the provided criteria.
-          description: If no criteria is provided, the default is to return all jobs.
+          summary: Search for jobs and cron jobs
+          description: Search for jobs based on the provided criteria. If no criteria is provided, the default is to return all jobs.
           requestBody:
             content:
               application/json:
@@ -38,28 +38,27 @@ async def post_api_v2_jobs_search(body_scope: Dict[str, Any] = None, body_types:
                   properties:
                     scope:
                       type: object
-                      description: Specifies the scope of the jobs to search.
+                      description: The scope of the jobs to search for.
                     types:
                       type: array
                       items:
                         type: string
-                      description: Specifies the types of jobs to search.
+                      description: The types of jobs to include in the search.
                     status:
                       type: string
-                      description: Specifies the status of the jobs to search.
+                      description: The status of the jobs to filter by.
                     pagination:
                       type: object
-                      description: Specifies pagination details for the search results.
+                      description: Pagination details for the search results.
           responses:
             '200':
-              description: Successful response containing the search results.
+              description: A JSON response containing the search results.
               content:
                 application/json:
                   schema:
                     type: object
-                    additionalProperties: true
             '400':
-              description: Bad request due to invalid input parameters.
+              description: Bad request due to invalid input.
             '500':
               description: Internal server error.
     '''

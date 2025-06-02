@@ -42,90 +42,90 @@ async def gethealthrisks(param_pageSize: int, param_offset: int, param_impactGro
         get:
           summary: Get all the health risks.
           parameters:
-            - name: param_pageSize
+            - name: pageSize
               in: query
               required: true
               schema:
                 type: integer
-            - name: param_offset
+            - name: offset
               in: query
               required: true
               schema:
                 type: integer
-            - name: param_impactGroupType
+            - name: impactGroupType
               in: query
               required: true
               schema:
                 type: array
                 items:
                   type: string
-            - name: param_checkType
+            - name: checkType
               in: query
               schema:
                 type: array
                 items:
                   type: string
-            - name: param_status
+            - name: status
               in: query
               schema:
                 type: array
                 items:
                   type: string
-            - name: param_clusterName
+            - name: clusterName
               in: query
               schema:
                 type: array
                 items:
                   type: string
-            - name: param_namespace
+            - name: namespace
               in: query
               schema:
                 type: array
                 items:
                   type: string
-            - name: param_shortResourceNameSearchTerm
+            - name: shortResourceNameSearchTerm
               in: query
               schema:
                 type: string
-            - name: param_shortResourceName
+            - name: shortResourceName
               in: query
               schema:
                 type: array
                 items:
                   type: string
-            - name: param_impactGroupId
+            - name: impactGroupId
               in: query
               schema:
                 type: array
                 items:
                   type: string
-            - name: param_severity
+            - name: severity
               in: query
               schema:
                 type: array
                 items:
                   type: string
-            - name: param_komodorUid
+            - name: komodorUid
               in: query
               schema:
                 type: array
                 items:
                   type: string
-            - name: param_resourceType
+            - name: resourceType
               in: query
               schema:
                 type: array
                 items:
                   type: string
-            - name: param_createdFromEpoch
+            - name: createdFromEpoch
               in: query
               schema:
                 type: string
-            - name: param_createdToEpoch
+            - name: createdToEpoch
               in: query
               schema:
                 type: string
-            - name: param_checkCategory
+            - name: checkCategory
               in: query
               schema:
                 type: array
