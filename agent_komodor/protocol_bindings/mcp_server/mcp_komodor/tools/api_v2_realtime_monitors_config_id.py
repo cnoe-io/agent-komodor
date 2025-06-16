@@ -1,9 +1,32 @@
-
 """Tools for /api/v2/realtime-monitors/config/{id} operations"""
 
 import logging
 from typing import Dict, Any, List
 from mcp_komodor.api.client import make_api_request
+
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -12,276 +35,122 @@ logger = logging.getLogger("mcp_tools")
 
 async def get_api_v2_realtime_monitors_config_id(path_id: str) -> Dict[str, Any]:
     '''
-    Fetches the configuration for a specific realtime monitor by its ID.
+    Fetches the configuration of a real-time monitor by its UUID.
 
     Args:
-        path_id (str): The ID of the realtime monitor configuration to retrieve.
+        path_id (str): The UUID of the monitor whose configuration is to be retrieved.
 
     Returns:
-        Dict[str, Any]: The JSON response containing the configuration details.
+        Dict[str, Any]: The JSON response from the API call containing the monitor's configuration details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        get:
-          summary: Retrieve realtime monitor configuration by ID
-          operationId: getApiV2RealtimeMonitorsConfigId
-          parameters:
-            - name: path_id
-              in: path
-              required: true
-              description: The ID of the realtime monitor configuration
-              schema:
-                type: string
-          responses:
-            '200':
-              description: Successful response with configuration details
-              content:
-                application/json:
-                  schema:
-                    type: object
-                    additionalProperties: true
-            '404':
-              description: Configuration not found
-            '500':
-              description: Internal server error
     '''
     logger.debug("Making GET request to /api/v2/realtime-monitors/config/{id}")
+
     params = {}
-    data = None
-    
-
-    
-
-
-    
     data = {}
 
-    
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
-    if not data:
-        data = None
     success, response = await make_api_request(
-        f"/api/v2/realtime-monitors/config/{path_id}",
-        method="GET",
-        params=params,
-        data=data
+        f"/api/v2/realtime-monitors/config/{path_id}", method="GET", params=params, data=data
     )
+
     if not success:
         logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get('error', 'Request failed')}
+        return {"error": response.get("error", "Request failed")}
     return response
 
 
-async def put_api_v2_realtime_monitors_config_id(path_id: str, body_sensors: List[str], body_type: str, body_name: str = None, body_sinks: Dict[str, Any] = None, body_active: bool = None, body_variables: Dict[str, Any] = None, body_sinksOptions: Dict[str, Any] = None) -> Dict[str, Any]:
+async def put_api_v2_realtime_monitors_config_id(
+    path_id: str,
+    body_sensors: List[str],
+    body_type: str,
+    body_name: str = None,
+    body_sinks: Dict[str, Any] = None,
+    body_active: bool = None,
+    body_variables: Dict[str, Any] = None,
+    body_sinksOptions_notifyOn: List[str] = None,
+) -> Dict[str, Any]:
     '''
-    Updates the configuration of a real-time monitor by its ID.
+    Updates the configuration of a real-time monitor by its UUID.
 
     Args:
-        path_id (str): The ID of the monitor configuration to update.
-        body_sensors (List[str]): List of sensor identifiers to be included in the monitor.
-        body_type (str): The type of the monitor configuration.
-        body_name (str, optional): The name of the monitor configuration. Defaults to None.
+        path_id (str): UUID of the monitor to be updated.
+        body_sensors (List[str]): List of sensors associated with the monitor.
+        body_type (str): Type of the monitor.
+        body_name (str, optional): Name of the monitor. Defaults to None.
         body_sinks (Dict[str, Any], optional): Configuration for data sinks. Defaults to None.
-        body_active (bool, optional): Indicates if the monitor is active. Defaults to None.
+        body_active (bool, optional): Activation status of the monitor. Defaults to None.
         body_variables (Dict[str, Any], optional): Variables associated with the monitor. Defaults to None.
-        body_sinksOptions (Dict[str, Any], optional): Options for the data sinks. Defaults to None.
+        body_sinksOptions_notifyOn (List[str], optional): Notification options for sinks. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        put:
-          summary: Updates the configuration of a real-time monitor by its ID.
-          operationId: putApiV2RealtimeMonitorsConfigId
-          parameters:
-            - name: path_id
-              in: path
-              required: true
-              schema:
-                type: string
-          requestBody:
-            required: true
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    sensors:
-                      type: array
-                      items:
-                        type: string
-                    type:
-                      type: string
-                    name:
-                      type: string
-                    sinks:
-                      type: object
-                    active:
-                      type: boolean
-                    variables:
-                      type: object
-                    sinksOptions:
-                      type: object
-          responses:
-            '200':
-              description: Successful response
-              content:
-                application/json:
-                  schema:
-                    type: object
     '''
     logger.debug("Making PUT request to /api/v2/realtime-monitors/config/{id}")
+
     params = {}
-    data = None
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-    
     data = {}
 
-    
+    flat_body = {}
+    if body_sensors is not None:
+        flat_body["sensors"] = body_sensors
+    if body_type is not None:
+        flat_body["type"] = body_type
+    if body_name is not None:
+        flat_body["name"] = body_name
+    if body_sinks is not None:
+        flat_body["sinks"] = body_sinks
+    if body_active is not None:
+        flat_body["active"] = body_active
+    if body_variables is not None:
+        flat_body["variables"] = body_variables
+    if body_sinksOptions_notifyOn is not None:
+        flat_body["sinksOptions_notifyOn"] = body_sinksOptions_notifyOn
+    data = assemble_nested_body(flat_body)
 
-    
-    data["sensors"] = body_sensors
-    
-
-    
-    data["type"] = body_type
-    
-
-    
-    data["name"] = body_name
-    
-
-    
-    data["sinks"] = body_sinks
-    
-
-    
-    data["active"] = body_active
-    
-
-    
-    data["variables"] = body_variables
-    
-
-    
-    data["sinksOptions"] = body_sinksOptions
-    
-
-    if not data:
-        data = None
     success, response = await make_api_request(
-        f"/api/v2/realtime-monitors/config/{path_id}",
-        method="PUT",
-        params=params,
-        data=data
+        f"/api/v2/realtime-monitors/config/{path_id}", method="PUT", params=params, data=data
     )
+
     if not success:
         logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get('error', 'Request failed')}
+        return {"error": response.get("error", "Request failed")}
     return response
 
 
 async def delete_api_v2_realtime_monitors_config_id(path_id: str) -> Dict[str, Any]:
     '''
-    Deletes a real-time monitor configuration by its ID.
+    Deletes a real-time monitor configuration by its UUID.
 
     Args:
-        path_id (str): The ID of the real-time monitor configuration to delete.
+        path_id (str): The UUID of the monitor to be deleted.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, which includes the status of the deletion.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        delete:
-          summary: Deletes a real-time monitor configuration by ID.
-          operationId: deleteApiV2RealtimeMonitorsConfigId
-          parameters:
-            - name: path_id
-              in: path
-              required: true
-              description: The ID of the real-time monitor configuration.
-              schema:
-                type: string
-          responses:
-            '200':
-              description: Successful deletion of the configuration.
-              content:
-                application/json:
-                  schema:
-                    type: object
-                    properties:
-                      status:
-                        type: string
-                        example: "success"
-            '404':
-              description: Configuration not found.
-              content:
-                application/json:
-                  schema:
-                    type: object
-                    properties:
-                      error:
-                        type: string
-                        example: "Configuration not found"
-            '500':
-              description: Internal server error.
-              content:
-                application/json:
-                  schema:
-                    type: object
-                    properties:
-                      error:
-                        type: string
-                        example: "Internal server error"
     '''
     logger.debug("Making DELETE request to /api/v2/realtime-monitors/config/{id}")
+
     params = {}
-    data = None
-    
-
-    
-
-
-    
     data = {}
 
-    
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
-    if not data:
-        data = None
     success, response = await make_api_request(
-        f"/api/v2/realtime-monitors/config/{path_id}",
-        method="DELETE",
-        params=params,
-        data=data
+        f"/api/v2/realtime-monitors/config/{path_id}", method="DELETE", params=params, data=data
     )
+
     if not success:
         logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get('error', 'Request failed')}
+        return {"error": response.get("error", "Request failed")}
     return response

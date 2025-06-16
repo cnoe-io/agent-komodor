@@ -1,77 +1,64 @@
-
 """Tools for /mgmt/v1/rbac/users/{id}/roles operations"""
 
 import logging
 from typing import Dict, Any
 from mcp_komodor.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested structure.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def rbacuserrolescontrollerv1_get(path_id: str) -> Dict[str, Any]:
+async def rbac_user_roles_controller_v1_get(path_id: str) -> Dict[str, Any]:
     '''
     Fetches the roles associated with a specific user in the RBAC system.
 
     Args:
-        path_id (str): The unique identifier of the user whose roles are to be retrieved.
+        path_id (str): The UUID of the user whose roles are to be retrieved.
 
     Returns:
         Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the user's roles.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        get:
-          summary: Retrieve roles for a specific user.
-          operationId: rbacuserrolescontrollerv1_get
-          parameters:
-            - name: path_id
-              in: path
-              required: true
-              description: The unique identifier of the user.
-              schema:
-                type: string
-          responses:
-            '200':
-              description: A list of roles associated with the user.
-              content:
-                application/json:
-                  schema:
-                    type: object
-                    additionalProperties:
-                      type: string
-            '400':
-              description: Bad request due to invalid user ID.
-            '404':
-              description: User not found.
-            '500':
-              description: Internal server error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making GET request to /mgmt/v1/rbac/users/{id}/roles")
+
     params = {}
-    data = None
-    
-
-    
-
-
-    
     data = {}
 
-    
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
-    if not data:
-        data = None
     success, response = await make_api_request(
-        f"/mgmt/v1/rbac/users/{path_id}/roles",
-        method="GET",
-        params=params,
-        data=data
+        f"/mgmt/v1/rbac/users/{path_id}/roles", method="GET", params=params, data=data
     )
+
     if not success:
         logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get('error', 'Request failed')}
+        return {"error": response.get("error", "Request failed")}
     return response

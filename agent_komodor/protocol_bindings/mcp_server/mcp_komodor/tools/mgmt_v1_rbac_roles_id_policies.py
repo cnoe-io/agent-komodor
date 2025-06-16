@@ -1,75 +1,64 @@
-
 """Tools for /mgmt/v1/rbac/roles/{id}/policies operations"""
 
 import logging
 from typing import Dict, Any
 from mcp_komodor.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def rbacrolepoliciescontrollerv1_get(path_id: str) -> Dict[str, Any]:
+async def rbac_role_policies_controller_v1_get(path_id: str) -> Dict[str, Any]:
     '''
     Fetches the policies associated with a specific RBAC role.
 
     Args:
-        path_id (str): The unique identifier for the RBAC role.
+        path_id (str): The UUID of the role for which policies are being retrieved.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the policies.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the policies associated with the specified role.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      get:
-        summary: Retrieve policies for a specific RBAC role.
-        operationId: rbacrolepoliciescontrollerv1_get
-        parameters:
-          - name: path_id
-            in: path
-            required: true
-            description: The unique identifier for the RBAC role.
-            schema:
-              type: string
-        responses:
-          '200':
-            description: A list of policies associated with the RBAC role.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  additionalProperties:
-                    type: object
-          '404':
-            description: Role not found.
-          '500':
-            description: Internal server error.
+        Exception: If the API request fails or returns an error, an exception is raised with details of the failure.
     '''
     logger.debug("Making GET request to /mgmt/v1/rbac/roles/{id}/policies")
+
     params = {}
-    data = None
-    
-
-    
-
-
-    
     data = {}
 
-    
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
-    if not data:
-        data = None
     success, response = await make_api_request(
-        f"/mgmt/v1/rbac/roles/{path_id}/policies",
-        method="GET",
-        params=params,
-        data=data
+        f"/mgmt/v1/rbac/roles/{path_id}/policies", method="GET", params=params, data=data
     )
+
     if not success:
         logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get('error', 'Request failed')}
+        return {"error": response.get("error", "Request failed")}
     return response

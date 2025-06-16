@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
  MCP Server
@@ -6,6 +5,7 @@
 This server provides a Model Context Protocol (MCP) interface to the ,
 allowing large language models and AI assistants to interact with the service.
 """
+
 import logging
 import os
 from dotenv import load_dotenv
@@ -122,15 +122,14 @@ def main():
     logging.info(f"Starting MCP server in {MCP_MODE} mode on {MCP_HOST}:{MCP_PORT}")
 
     # Get agent name from environment variables
-    AGENT_NAME = os.getenv("AGENT_NAME", "PUBLIC_MCPAPI Agent")
+    AGENT_NAME = os.getenv("AGENT_NAME", "KOMODOR Agent")
     logging.info(f"Agent name: {AGENT_NAME}")
 
     # Create server instance
     if MCP_MODE == "SSE":
-      mcp = FastMCP(f"{AGENT_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT)
+        mcp = FastMCP(f"{AGENT_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT)
     else:
-      mcp = FastMCP("PUBLIC_MCPAPI MCP Server")
-
+        mcp = FastMCP("KOMODOR MCP Server")
 
     # Register api_v2_services_search tools
 
@@ -192,13 +191,13 @@ def main():
 
     # Register api_v2_health_risks tools
 
-    mcp.tool()(api_v2_health_risks.gethealthrisks)
+    mcp.tool()(api_v2_health_risks.get_health_risks)
 
     # Register api_v2_health_risks_id tools
 
-    mcp.tool()(api_v2_health_risks_id.gethealthriskdata)
+    mcp.tool()(api_v2_health_risks_id.get_health_risk_data)
 
-    mcp.tool()(api_v2_health_risks_id.updatehealthriskstatus)
+    mcp.tool()(api_v2_health_risks_id.update_health_risk_status)
 
     # Register api_v2_users tools
 
@@ -240,131 +239,131 @@ def main():
 
     # Register api_v2_cost_allocation tools
 
-    mcp.tool()(api_v2_cost_allocation.getcostallocation)
+    mcp.tool()(api_v2_cost_allocation.get_cost_allocation)
 
     # Register api_v2_cost_right_sizing_service tools
 
-    mcp.tool()(api_v2_cost_right_sizing_service.getcostrightsizingperservice)
+    mcp.tool()(api_v2_cost_right_sizing_service.get_cost_right_sizing_per_service)
 
     # Register api_v2_cost_right_sizing_container tools
 
-    mcp.tool()(api_v2_cost_right_sizing_container.getcostrightsizingpercontainer)
+    mcp.tool()(api_v2_cost_right_sizing_container.get_cost_right_sizing_per_container)
 
     # Register api_v2_klaudia_rca_sessions tools
 
-    mcp.tool()(api_v2_klaudia_rca_sessions.triggerklaudiarca)
+    mcp.tool()(api_v2_klaudia_rca_sessions.trigger_klaudia_rca)
 
     # Register api_v2_klaudia_rca_sessions_id tools
 
-    mcp.tool()(api_v2_klaudia_rca_sessions_id.getklaudiarcaresults)
+    mcp.tool()(api_v2_klaudia_rca_sessions_id.get_klaudia_rca_results)
 
     # Register mgmt_v1_apikey_validate tools
 
-    mcp.tool()(mgmt_v1_apikey_validate.apikeyscontroller_validate)
+    mcp.tool()(mgmt_v1_apikey_validate.api_keys_controller_validate)
 
     # Register mgmt_v1_events tools
 
-    mcp.tool()(mgmt_v1_events.eventscontroller_createcustomevent)
+    mcp.tool()(mgmt_v1_events.events_controller_create_custom_event)
 
     # Register mgmt_v1_monitors_config tools
 
-    mcp.tool()(mgmt_v1_monitors_config.monitorscontrollerv1_getall)
+    mcp.tool()(mgmt_v1_monitors_config.monitors_controller_v1_get_all)
 
-    mcp.tool()(mgmt_v1_monitors_config.monitorscontrollerv1_post)
+    mcp.tool()(mgmt_v1_monitors_config.monitors_controller_v1_post)
 
     # Register mgmt_v1_monitors_config_id tools
 
-    mcp.tool()(mgmt_v1_monitors_config_id.monitorscontrollerv1_get)
+    mcp.tool()(mgmt_v1_monitors_config_id.monitors_controller_v1_get)
 
-    mcp.tool()(mgmt_v1_monitors_config_id.monitorscontrollerv1_put)
+    mcp.tool()(mgmt_v1_monitors_config_id.monitors_controller_v1_put)
 
-    mcp.tool()(mgmt_v1_monitors_config_id.monitorscontrollerv1_delete)
+    mcp.tool()(mgmt_v1_monitors_config_id.monitors_controller_v1_delete)
 
     # Register mgmt_v1_rbac_roles tools
 
-    mcp.tool()(mgmt_v1_rbac_roles.rolescontrollerv1_getall)
+    mcp.tool()(mgmt_v1_rbac_roles.roles_controller_v1_get_all)
 
-    mcp.tool()(mgmt_v1_rbac_roles.rolescontrollerv1_post)
+    mcp.tool()(mgmt_v1_rbac_roles.roles_controller_v1_post)
 
-    mcp.tool()(mgmt_v1_rbac_roles.rolescontrollerv1_delete)
+    mcp.tool()(mgmt_v1_rbac_roles.roles_controller_v1_delete)
 
     # Register mgmt_v1_rbac_roles_id tools
 
-    mcp.tool()(mgmt_v1_rbac_roles_id.rolescontrollerv1_get)
+    mcp.tool()(mgmt_v1_rbac_roles_id.roles_controller_v1_get)
 
     # Register mgmt_v1_rbac_roles_id_policies tools
 
-    mcp.tool()(mgmt_v1_rbac_roles_id_policies.rbacrolepoliciescontrollerv1_get)
+    mcp.tool()(mgmt_v1_rbac_roles_id_policies.rbac_role_policies_controller_v1_get)
 
     # Register mgmt_v1_rbac_roles_policies tools
 
-    mcp.tool()(mgmt_v1_rbac_roles_policies.rbacrolepoliciescontrollerv1_post)
+    mcp.tool()(mgmt_v1_rbac_roles_policies.rbac_role_policies_controller_v1_post)
 
-    mcp.tool()(mgmt_v1_rbac_roles_policies.rbacrolepoliciescontrollerv1_delete)
+    mcp.tool()(mgmt_v1_rbac_roles_policies.rbac_role_policies_controller_v1_delete)
 
     # Register mgmt_v1_rbac_policies tools
 
-    mcp.tool()(mgmt_v1_rbac_policies.policiescontrollerv1_getall)
+    mcp.tool()(mgmt_v1_rbac_policies.policies_controller_v1_get_all)
 
-    mcp.tool()(mgmt_v1_rbac_policies.policiescontrollerv1_post)
+    mcp.tool()(mgmt_v1_rbac_policies.policies_controller_v1_post)
 
-    mcp.tool()(mgmt_v1_rbac_policies.policiescontrollerv1_delete)
+    mcp.tool()(mgmt_v1_rbac_policies.policies_controller_v1_delete)
 
     # Register mgmt_v1_rbac_policies_id tools
 
-    mcp.tool()(mgmt_v1_rbac_policies_id.policiescontrollerv1_get)
+    mcp.tool()(mgmt_v1_rbac_policies_id.policies_controller_v1_get)
 
-    mcp.tool()(mgmt_v1_rbac_policies_id.policiescontrollerv1_updatepolicy)
+    mcp.tool()(mgmt_v1_rbac_policies_id.policies_controller_v1_update_policy)
 
     # Register mgmt_v1_rbac_users tools
 
-    mcp.tool()(mgmt_v1_rbac_users.rbacusercontrollerv1_getall)
+    mcp.tool()(mgmt_v1_rbac_users.rbac_user_controller_v1_get_all)
 
     # Register mgmt_v1_rbac_users_id tools
 
-    mcp.tool()(mgmt_v1_rbac_users_id.rbacusercontrollerv1_get)
+    mcp.tool()(mgmt_v1_rbac_users_id.rbac_user_controller_v1_get)
 
     # Register mgmt_v1_rbac_users_id_roles tools
 
-    mcp.tool()(mgmt_v1_rbac_users_id_roles.rbacuserrolescontrollerv1_get)
+    mcp.tool()(mgmt_v1_rbac_users_id_roles.rbac_user_roles_controller_v1_get)
 
     # Register mgmt_v1_rbac_users_roles tools
 
-    mcp.tool()(mgmt_v1_rbac_users_roles.rbacuserrolescontrollerv1_post)
+    mcp.tool()(mgmt_v1_rbac_users_roles.rbac_user_roles_controller_v1_post)
 
-    mcp.tool()(mgmt_v1_rbac_users_roles.rbacuserrolescontrollerv1_delete)
+    mcp.tool()(mgmt_v1_rbac_users_roles.rbac_user_roles_controller_v1_delete)
 
     # Register mgmt_v1_integrations_kubernetes tools
 
-    mcp.tool()(mgmt_v1_integrations_kubernetes.clustercontroller_post)
+    mcp.tool()(mgmt_v1_integrations_kubernetes.cluster_controller_post)
 
     # Register mgmt_v1_integrations_kubernetes_id tools
 
-    mcp.tool()(mgmt_v1_integrations_kubernetes_id.clustercontroller_delete)
+    mcp.tool()(mgmt_v1_integrations_kubernetes_id.cluster_controller_delete)
 
     # Register mgmt_v1_integrations_kubernetes_clustername tools
 
-    mcp.tool()(mgmt_v1_integrations_kubernetes_clustername.clustercontroller_getbyclustername)
+    mcp.tool()(mgmt_v1_integrations_kubernetes_clustername.cluster_controller_get_by_cluster_name)
 
     # Register mgmt_v1_rbac_actions tools
 
-    mcp.tool()(mgmt_v1_rbac_actions.actionscontrollerv1_getall)
+    mcp.tool()(mgmt_v1_rbac_actions.actions_controller_v1_get_all)
 
-    mcp.tool()(mgmt_v1_rbac_actions.actionscontrollerv1_post)
+    mcp.tool()(mgmt_v1_rbac_actions.actions_controller_v1_post)
 
     # Register mgmt_v1_rbac_actions_action tools
 
-    mcp.tool()(mgmt_v1_rbac_actions_action.actionscontrollerv1_get)
+    mcp.tool()(mgmt_v1_rbac_actions_action.actions_controller_v1_get)
 
     # Register mgmt_v1_rbac_actions_id tools
 
-    mcp.tool()(mgmt_v1_rbac_actions_id.actionscontrollerv1_delete)
+    mcp.tool()(mgmt_v1_rbac_actions_id.actions_controller_v1_delete)
 
-    mcp.tool()(mgmt_v1_rbac_actions_id.actionscontrollerv1_update)
-
+    mcp.tool()(mgmt_v1_rbac_actions_id.actions_controller_v1_update)
 
     # Run the MCP server
     mcp.run()
+
 
 if __name__ == "__main__":
     main()

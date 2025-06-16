@@ -1,236 +1,129 @@
-
 """Tools for /api/v2/audit-log operations"""
 
 import logging
 from typing import Dict, Any, List
 from mcp_komodor.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def get_api_v2_audit_log(param_id: str = None, param_userIds: List[str] = None, param_actions: List[str] = None, param_categories: List[str] = None, param_operations: List[str] = None, param_entityTypes: List[str] = None, param_entityName: str = None, param_startTime: str = None, param_endTime: str = None, param_status: str = None, param_page: int = None, param_pageSize: int = None, param_sort: str = None) -> Dict[str, Any]:
+async def get_api_v2_audit_log(
+    param_id: str = None,
+    param_userIds: List[str] = None,
+    param_actions: List[str] = None,
+    param_categories: List[str] = None,
+    param_operations: List[str] = None,
+    param_entityTypes: List[str] = None,
+    param_entityName: str = None,
+    param_startTime: str = None,
+    param_endTime: str = None,
+    param_status: str = None,
+    param_page: int = None,
+    param_pageSize: int = None,
+    param_sort: str = None,
+) -> Dict[str, Any]:
     '''
     Query audit logs with filters, sort, and pagination.
 
     Args:
-        param_id (str, optional): The unique identifier for the audit log entry. Defaults to None.
-        param_userIds (List[str], optional): List of user IDs to filter the audit logs. Defaults to None.
-        param_actions (List[str], optional): List of actions to filter the audit logs. Defaults to None.
-        param_categories (List[str], optional): List of categories to filter the audit logs. Defaults to None.
-        param_operations (List[str], optional): List of operations to filter the audit logs. Defaults to None.
-        param_entityTypes (List[str], optional): List of entity types to filter the audit logs. Defaults to None.
-        param_entityName (str, optional): The name of the entity to filter the audit logs. Defaults to None.
-        param_startTime (str, optional): The start time for the audit log query in ISO 8601 format. Defaults to None.
-        param_endTime (str, optional): The end time for the audit log query in ISO 8601 format. Defaults to None.
-        param_status (str, optional): The status to filter the audit logs. Defaults to None.
-        param_page (int, optional): The page number for pagination. Defaults to None.
-        param_pageSize (int, optional): The number of entries per page for pagination. Defaults to None.
-        param_sort (str, optional): The sort order for the audit logs. Defaults to None.
+        param_id (str, optional): Audit log id. Defaults to all ids if not provided.
+        param_userIds (List[str], optional): List of user IDs to filter the logs. Defaults to None.
+        param_actions (List[str], optional): List of actions to filter the logs. Defaults to None.
+        param_categories (List[str], optional): List of categories to filter the logs. Defaults to None.
+        param_operations (List[str], optional): List of operations to filter the logs. Defaults to None.
+        param_entityTypes (List[str], optional): List of entity types to filter the logs. Defaults to None.
+        param_entityName (str, optional): Name of the entity to filter the logs. Defaults to None.
+        param_startTime (str, optional): Start time for the logs query. Defaults to 8 hours ago if not provided. Ignored if response is CSV.
+        param_endTime (str, optional): End time for the logs query. Defaults to now if not provided. Ignored if response is CSV.
+        param_status (str, optional): Status to filter the logs. Defaults to all statuses if not provided.
+        param_page (int, optional): Page number for pagination. Defaults to 1 if not provided. Ignored if response is CSV.
+        param_pageSize (int, optional): Page size for pagination. Defaults to 20 if not provided. Ignored if response is CSV.
+        param_sort (str, optional): Sort order for the logs. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the audit logs.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        get:
-          summary: Query audit logs with filters, sort, and pagination.
-          parameters:
-            - name: id
-              in: query
-              description: The unique identifier for the audit log entry.
-              required: false
-              schema:
-                type: string
-            - name: userIds
-              in: query
-              description: List of user IDs to filter the audit logs.
-              required: false
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: actions
-              in: query
-              description: List of actions to filter the audit logs.
-              required: false
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: categories
-              in: query
-              description: List of categories to filter the audit logs.
-              required: false
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: operations
-              in: query
-              description: List of operations to filter the audit logs.
-              required: false
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: entityTypes
-              in: query
-              description: List of entity types to filter the audit logs.
-              required: false
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: entityName
-              in: query
-              description: The name of the entity to filter the audit logs.
-              required: false
-              schema:
-                type: string
-            - name: startTime
-              in: query
-              description: The start time for the audit log query in ISO 8601 format.
-              required: false
-              schema:
-                type: string
-            - name: endTime
-              in: query
-              description: The end time for the audit log query in ISO 8601 format.
-              required: false
-              schema:
-                type: string
-            - name: status
-              in: query
-              description: The status to filter the audit logs.
-              required: false
-              schema:
-                type: string
-            - name: page
-              in: query
-              description: The page number for pagination.
-              required: false
-              schema:
-                type: integer
-            - name: pageSize
-              in: query
-              description: The number of entries per page for pagination.
-              required: false
-              schema:
-                type: integer
-            - name: sort
-              in: query
-              description: The sort order for the audit logs.
-              required: false
-              schema:
-                type: string
-          responses:
-            '200':
-              description: Successful response containing the audit logs.
-              content:
-                application/json:
-                  schema:
-                    type: object
     '''
     logger.debug("Making GET request to /api/v2/audit-log")
+
     params = {}
-    data = None
-    
-
-    
-    params["id"] = param_id
-    
-
-    
-    params["userIds"] = param_userIds
-    
-
-    
-    params["actions"] = param_actions
-    
-
-    
-    params["categories"] = param_categories
-    
-
-    
-    params["operations"] = param_operations
-    
-
-    
-    params["entityTypes"] = param_entityTypes
-    
-
-    
-    params["entityName"] = param_entityName
-    
-
-    
-    params["startTime"] = param_startTime
-    
-
-    
-    params["endTime"] = param_endTime
-    
-
-    
-    params["status"] = param_status
-    
-
-    
-    params["page"] = param_page
-    
-
-    
-    params["pageSize"] = param_pageSize
-    
-
-    
-    params["sort"] = param_sort
-    
-
-
-    
     data = {}
 
-    
+    if param_id is not None:
+        params["id"] = str(param_id).lower() if isinstance(param_id, bool) else param_id
 
-    
+    if param_userIds is not None:
+        params["userIds"] = str(param_userIds).lower() if isinstance(param_userIds, bool) else param_userIds
 
-    
+    if param_actions is not None:
+        params["actions"] = str(param_actions).lower() if isinstance(param_actions, bool) else param_actions
 
-    
+    if param_categories is not None:
+        params["categories"] = str(param_categories).lower() if isinstance(param_categories, bool) else param_categories
 
-    
+    if param_operations is not None:
+        params["operations"] = str(param_operations).lower() if isinstance(param_operations, bool) else param_operations
 
-    
+    if param_entityTypes is not None:
+        params["entityTypes"] = (
+            str(param_entityTypes).lower() if isinstance(param_entityTypes, bool) else param_entityTypes
+        )
 
-    
+    if param_entityName is not None:
+        params["entityName"] = str(param_entityName).lower() if isinstance(param_entityName, bool) else param_entityName
 
-    
+    if param_startTime is not None:
+        params["startTime"] = str(param_startTime).lower() if isinstance(param_startTime, bool) else param_startTime
 
-    
+    if param_endTime is not None:
+        params["endTime"] = str(param_endTime).lower() if isinstance(param_endTime, bool) else param_endTime
 
-    
+    if param_status is not None:
+        params["status"] = str(param_status).lower() if isinstance(param_status, bool) else param_status
 
-    
+    if param_page is not None:
+        params["page"] = str(param_page).lower() if isinstance(param_page, bool) else param_page
 
-    
+    if param_pageSize is not None:
+        params["pageSize"] = str(param_pageSize).lower() if isinstance(param_pageSize, bool) else param_pageSize
 
-    
+    if param_sort is not None:
+        params["sort"] = str(param_sort).lower() if isinstance(param_sort, bool) else param_sort
 
-    if not data:
-        data = None
-    success, response = await make_api_request(
-        "/api/v2/audit-log",
-        method="GET",
-        params=params,
-        data=data
-    )
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
+
+    success, response = await make_api_request("/api/v2/audit-log", method="GET", params=params, data=data)
+
     if not success:
         logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get('error', 'Request failed')}
+        return {"error": response.get("error", "Request failed")}
     return response

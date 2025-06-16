@@ -1,200 +1,154 @@
-
 """Tools for /mgmt/v1/monitors/config operations"""
 
 import logging
 from typing import Dict, Any, List
 from mcp_komodor.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def monitorscontrollerv1_getall() -> Dict[str, Any]:
+async def monitors_controller_v1_get_all() -> Dict[str, Any]:
     '''
-    Fetches all monitor configurations.
+    Fetches all monitor configurations from the deprecated v1 API endpoint.
 
-    This function is deprecated. Please use `/api/v2/realtime-monitors/config` for new implementations and better validation and error handling.
+    This function is deprecated. It is recommended to use the `/api/v2/realtime-monitors/config` API for new implementations, as it provides better validation and error handling.
+
+    Args:
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing monitor configurations.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      deprecated: true
-      summary: Fetch all monitor configurations
-      description: |
-        This API is deprecated. Please use `/api/v2/realtime-monitors/config` API instead for new implementations and better validation and error handling.
-      responses:
-        '200':
-          description: Successful response with monitor configurations
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: true
-        '4XX':
-          description: Client error
-        '5XX':
-          description: Server error
     '''
     logger.debug("Making GET request to /mgmt/v1/monitors/config")
+
     params = {}
-    data = None
-    
-
-
-    
     data = {}
 
-    if not data:
-        data = None
-    success, response = await make_api_request(
-        "/mgmt/v1/monitors/config",
-        method="GET",
-        params=params,
-        data=data
-    )
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
+
+    success, response = await make_api_request("/mgmt/v1/monitors/config", method="GET", params=params, data=data)
+
     if not success:
         logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get('error', 'Request failed')}
+        return {"error": response.get("error", "Request failed")}
     return response
 
 
-async def monitorscontrollerv1_post(body_name: str, body_type: str, body_active: bool, body_sensors: List[str], body_isDeleted: bool, body_variables: Dict[str, Any] = None, body_sinks: str = None, body_sinksOptions: Dict[str, Any] = None) -> Dict[str, Any]:
+async def monitors_controller_v1_post(
+    body_name: str,
+    body_type: str,
+    body_active: bool,
+    body_sensors: List[str],
+    body_isDeleted: bool,
+    body_variables_duration: float = None,
+    body_variables_minAvailable: str = None,
+    body_variables_categories: List[str] = None,
+    body_variables_cronJobCondition: str = None,
+    body_variables_resolveAfter: float = None,
+    body_variables_ignoreAfter: float = None,
+    body_variables_reasons: List[str] = None,
+    body_variables_nodeCreationThreshold: str = None,
+    body_sinks: str = None,
+    body_sinksOptions_notifyOn: List[str] = None,
+) -> Dict[str, Any]:
     '''
     Deprecated: Use `/api/v2/realtime-monitors/config` instead.
 
-    This function makes a POST request to the deprecated `/mgmt/v1/monitors/config` endpoint. It is recommended to use the `/api/v2/realtime-monitors/config` endpoint for new implementations, which offers better validation and error handling.
+    This function makes a POST request to the `/mgmt/v1/monitors/config` endpoint to configure monitor settings. It is deprecated and should be replaced with `/api/v2/realtime-monitors/config` for new implementations.
 
     Args:
         body_name (str): The name of the monitor.
         body_type (str): The type of the monitor.
         body_active (bool): Indicates if the monitor is active.
-        body_sensors (List[str]): A list of sensors associated with the monitor.
+        body_sensors (List[str]): List of sensors associated with the monitor.
         body_isDeleted (bool): Indicates if the monitor is marked as deleted.
-        body_variables (Dict[str, Any], optional): Additional variables for the monitor. Defaults to None.
-        body_sinks (str, optional): The sinks associated with the monitor. Defaults to None.
-        body_sinksOptions (Dict[str, Any], optional): Options for the sinks. Defaults to None.
+        body_variables_duration (float, optional): Duration for which the monitor variables are valid. Defaults to None.
+        body_variables_minAvailable (str, optional): Minimum availability required for the monitor. Defaults to None.
+        body_variables_categories (List[str], optional): Categories to filter for "Availability" monitor type. Defaults to None.
+        body_variables_cronJobCondition (str, optional): Condition for cron jobs related to the monitor. Defaults to None.
+        body_variables_resolveAfter (float, optional): Time after which issues are resolved automatically. Defaults to None.
+        body_variables_ignoreAfter (float, optional): Time after which issues are ignored. Defaults to None.
+        body_variables_reasons (List[str], optional): Reasons associated with the monitor variables. Defaults to None.
+        body_variables_nodeCreationThreshold (str, optional): Threshold for node creation related to the monitor. Defaults to None.
+        body_sinks (str, optional): Sinks associated with the monitor. Defaults to None.
+        body_sinksOptions_notifyOn (List[str], optional): Categories for notifications. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        deprecated: true
-        summary: "Create or update a monitor configuration."
-        description: "This API is deprecated. Please use `/api/v2/realtime-monitors/config` API instead for new implementations and better validation and error handling."
-        requestBody:
-            required: true
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            name:
-                                type: string
-                            type:
-                                type: string
-                            active:
-                                type: boolean
-                            sensors:
-                                type: array
-                                items:
-                                    type: string
-                            isDeleted:
-                                type: boolean
-                            variables:
-                                type: object
-                                additionalProperties: true
-                            sinks:
-                                type: string
-                            sinksOptions:
-                                type: object
-                                additionalProperties: true
-        responses:
-            '200':
-                description: "Successful response"
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            additionalProperties: true
-            '400':
-                description: "Bad request"
-            '500':
-                description: "Internal server error"
     '''
     logger.debug("Making POST request to /mgmt/v1/monitors/config")
+
     params = {}
-    data = None
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-    
     data = {}
 
-    
-    data["name"] = body_name
-    
+    flat_body = {}
+    if body_name is not None:
+        flat_body["name"] = body_name
+    if body_type is not None:
+        flat_body["type"] = body_type
+    if body_active is not None:
+        flat_body["active"] = body_active
+    if body_sensors is not None:
+        flat_body["sensors"] = body_sensors
+    if body_isDeleted is not None:
+        flat_body["isDeleted"] = body_isDeleted
+    if body_variables_duration is not None:
+        flat_body["variables_duration"] = body_variables_duration
+    if body_variables_minAvailable is not None:
+        flat_body["variables_minAvailable"] = body_variables_minAvailable
+    if body_variables_categories is not None:
+        flat_body["variables_categories"] = body_variables_categories
+    if body_variables_cronJobCondition is not None:
+        flat_body["variables_cronJobCondition"] = body_variables_cronJobCondition
+    if body_variables_resolveAfter is not None:
+        flat_body["variables_resolveAfter"] = body_variables_resolveAfter
+    if body_variables_ignoreAfter is not None:
+        flat_body["variables_ignoreAfter"] = body_variables_ignoreAfter
+    if body_variables_reasons is not None:
+        flat_body["variables_reasons"] = body_variables_reasons
+    if body_variables_nodeCreationThreshold is not None:
+        flat_body["variables_nodeCreationThreshold"] = body_variables_nodeCreationThreshold
+    if body_sinks is not None:
+        flat_body["sinks"] = body_sinks
+    if body_sinksOptions_notifyOn is not None:
+        flat_body["sinksOptions_notifyOn"] = body_sinksOptions_notifyOn
+    data = assemble_nested_body(flat_body)
 
-    
-    data["type"] = body_type
-    
+    success, response = await make_api_request("/mgmt/v1/monitors/config", method="POST", params=params, data=data)
 
-    
-    data["active"] = body_active
-    
-
-    
-    data["sensors"] = body_sensors
-    
-
-    
-    data["isDeleted"] = body_isDeleted
-    
-
-    
-    data["variables"] = body_variables
-    
-
-    
-    data["sinks"] = body_sinks
-    
-
-    
-    data["sinksOptions"] = body_sinksOptions
-    
-
-    if not data:
-        data = None
-    success, response = await make_api_request(
-        "/mgmt/v1/monitors/config",
-        method="POST",
-        params=params,
-        data=data
-    )
     if not success:
         logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get('error', 'Request failed')}
+        return {"error": response.get("error", "Request failed")}
     return response
