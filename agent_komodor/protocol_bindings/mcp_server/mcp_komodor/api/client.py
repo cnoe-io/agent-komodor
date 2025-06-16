@@ -1,5 +1,5 @@
-
 """API client for making requests to the service"""
+
 import os
 import logging
 from typing import Optional, Dict, Tuple, Any
@@ -10,13 +10,14 @@ API_URL = os.getenv("KOMODOR_API_URL")
 API_TOKEN = os.getenv("KOMODOR_TOKEN")
 
 if not API_URL:
-    raise ValueError("API_URL environment variable is not set.")
+    raise ValueError("KOMODOR_API_URL environment variable is not set.")
 if not API_TOKEN:
-    raise ValueError("API_TOKEN environment variable is not set.")
+    raise ValueError("KOMODOR_API_TOKEN environment variable is not set.")
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_komodor")
+
 
 async def make_api_request(
     path: str,
@@ -54,11 +55,7 @@ async def make_api_request(
         )
 
     try:
-
-        headers = {
-            "X-API-KEY": f"{token}",
-            "Content-Type": "application/json",
-        }
+        headers = {'X-API-KEY': API_TOKEN}
 
         logger.debug("Request headers prepared (Authorization header masked)")
         logger.debug(f"Request parameters: {params}")

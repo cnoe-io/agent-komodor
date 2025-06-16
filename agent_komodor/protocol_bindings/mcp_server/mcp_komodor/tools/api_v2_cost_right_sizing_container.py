@@ -1,115 +1,87 @@
-
 """Tools for /api/v2/cost/right-sizing/container operations"""
 
 import logging
 from typing import Dict, Any
 from mcp_komodor.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested structure.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def getcostrightsizingpercontainer(param_clusterName: str, param_namespace: str, param_serviceKind: str, param_serviceName: str) -> Dict[str, Any]:
+async def get_cost_right_sizing_per_container(
+    param_clusterName: str, param_namespace: str, param_serviceKind: str, param_serviceName: str
+) -> Dict[str, Any]:
     '''
     Get cost right-sizing summary per container.
 
     Args:
         param_clusterName (str): The name of the cluster.
-        param_namespace (str): The namespace within the cluster.
-        param_serviceKind (str): The kind of service (e.g., Deployment, StatefulSet).
-        param_serviceName (str): The name of the service.
+        param_namespace (str): The name of the namespace.
+        param_serviceKind (str): The service kind (e.g., Deployment, StatefulSet, CronJob, etc.).
+        param_serviceName (str): The service name.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing cost right-sizing information.
+        Dict[str, Any]: The JSON response from the API call containing the cost right-sizing summary per container.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        get:
-          summary: Get cost right-sizing summary per container.
-          operationId: getCostRightSizingPerContainer
-          parameters:
-            - name: param_clusterName
-              in: query
-              required: true
-              schema:
-                type: string
-              description: The name of the cluster.
-            - name: param_namespace
-              in: query
-              required: true
-              schema:
-                type: string
-              description: The namespace within the cluster.
-            - name: param_serviceKind
-              in: query
-              required: true
-              schema:
-                type: string
-              description: The kind of service (e.g., Deployment, StatefulSet).
-            - name: param_serviceName
-              in: query
-              required: true
-              schema:
-                type: string
-              description: The name of the service.
-          responses:
-            '200':
-              description: Successful response containing cost right-sizing information.
-              content:
-                application/json:
-                  schema:
-                    type: object
-                    additionalProperties: true
-            '400':
-              description: Bad request due to invalid parameters.
-            '500':
-              description: Internal server error.
     '''
     logger.debug("Making GET request to /api/v2/cost/right-sizing/container")
+
     params = {}
-    data = None
-    
-
-    
-    params["clusterName"] = param_clusterName
-    
-
-    
-    params["namespace"] = param_namespace
-    
-
-    
-    params["serviceKind"] = param_serviceKind
-    
-
-    
-    params["serviceName"] = param_serviceName
-    
-
-
-    
     data = {}
 
-    
+    if param_clusterName is not None:
+        params["clusterName"] = (
+            str(param_clusterName).lower() if isinstance(param_clusterName, bool) else param_clusterName
+        )
 
-    
+    if param_namespace is not None:
+        params["namespace"] = str(param_namespace).lower() if isinstance(param_namespace, bool) else param_namespace
 
-    
+    if param_serviceKind is not None:
+        params["serviceKind"] = (
+            str(param_serviceKind).lower() if isinstance(param_serviceKind, bool) else param_serviceKind
+        )
 
-    
+    if param_serviceName is not None:
+        params["serviceName"] = (
+            str(param_serviceName).lower() if isinstance(param_serviceName, bool) else param_serviceName
+        )
 
-    if not data:
-        data = None
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
+
     success, response = await make_api_request(
-        "/api/v2/cost/right-sizing/container",
-        method="GET",
-        params=params,
-        data=data
+        "/api/v2/cost/right-sizing/container", method="GET", params=params, data=data
     )
+
     if not success:
         logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get('error', 'Request failed')}
+        return {"error": response.get("error", "Request failed")}
     return response

@@ -1,109 +1,88 @@
-
 """Tools for /api/v2/jobs/search operations"""
 
 import logging
 from typing import Dict, Any, List
 from mcp_komodor.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def post_api_v2_jobs_search(body_scope: Dict[str, Any] = None, body_types: List[str] = None, body_status: str = None, body_pagination: Dict[str, Any] = None) -> Dict[str, Any]:
+async def post_api_v2_jobs_search(
+    body_scope_cluster: str = None,
+    body_scope_namespaces: List[str] = None,
+    body_types: List[str] = None,
+    body_status: str = None,
+    body_pagination_pageSize: int = None,
+    body_pagination_page: int = None,
+) -> Dict[str, Any]:
     '''
     Search for jobs and cron jobs.
 
+    Search for jobs based on the provided criteria. If no criteria is provided, the default is to return all jobs.
+
     Args:
-        body_scope (Dict[str, Any], optional): The scope of the jobs to search for. Defaults to None.
-        body_types (List[str], optional): The types of jobs to include in the search. Defaults to None.
-        body_status (str, optional): The status of the jobs to filter by. Defaults to None.
-        body_pagination (Dict[str, Any], optional): Pagination details for the search results. Defaults to None.
+        body_scope_cluster (str, optional): The cluster identifier. Defaults to None.
+        body_scope_namespaces (List[str], optional): A list of namespaces within the cluster. Defaults to None.
+        body_types (List[str], optional): The type of the job. Defaults to None.
+        body_status (str, optional): The status of the job. Defaults to None.
+        body_pagination_pageSize (int, optional): The number of results returned per page. Defaults to None.
+        body_pagination_page (int, optional): The page number. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the search results.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        post:
-          summary: Search for jobs and cron jobs
-          description: Search for jobs based on the provided criteria. If no criteria is provided, the default is to return all jobs.
-          requestBody:
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    scope:
-                      type: object
-                      description: The scope of the jobs to search for.
-                    types:
-                      type: array
-                      items:
-                        type: string
-                      description: The types of jobs to include in the search.
-                    status:
-                      type: string
-                      description: The status of the jobs to filter by.
-                    pagination:
-                      type: object
-                      description: Pagination details for the search results.
-          responses:
-            '200':
-              description: A JSON response containing the search results.
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '400':
-              description: Bad request due to invalid input.
-            '500':
-              description: Internal server error.
     '''
     logger.debug("Making POST request to /api/v2/jobs/search")
+
     params = {}
-    data = None
-    
-
-    
-
-    
-
-    
-
-    
-
-
-    
     data = {}
 
-    
-    data["scope"] = body_scope
-    
+    flat_body = {}
+    if body_scope_cluster is not None:
+        flat_body["scope_cluster"] = body_scope_cluster
+    if body_scope_namespaces is not None:
+        flat_body["scope_namespaces"] = body_scope_namespaces
+    if body_types is not None:
+        flat_body["types"] = body_types
+    if body_status is not None:
+        flat_body["status"] = body_status
+    if body_pagination_pageSize is not None:
+        flat_body["pagination_pageSize"] = body_pagination_pageSize
+    if body_pagination_page is not None:
+        flat_body["pagination_page"] = body_pagination_page
+    data = assemble_nested_body(flat_body)
 
-    
-    data["types"] = body_types
-    
+    success, response = await make_api_request("/api/v2/jobs/search", method="POST", params=params, data=data)
 
-    
-    data["status"] = body_status
-    
-
-    
-    data["pagination"] = body_pagination
-    
-
-    if not data:
-        data = None
-    success, response = await make_api_request(
-        "/api/v2/jobs/search",
-        method="POST",
-        params=params,
-        data=data
-    )
     if not success:
         logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get('error', 'Request failed')}
+        return {"error": response.get("error", "Request failed")}
     return response

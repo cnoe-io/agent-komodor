@@ -1,258 +1,164 @@
-
 """Tools for /api/v2/health/risks operations"""
 
 import logging
 from typing import Dict, Any, List
 from mcp_komodor.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def gethealthrisks(param_pageSize: int, param_offset: int, param_impactGroupType: List[str], param_checkType: List[str] = None, param_status: List[str] = None, param_clusterName: List[str] = None, param_namespace: List[str] = None, param_shortResourceNameSearchTerm: str = None, param_shortResourceName: List[str] = None, param_impactGroupId: List[str] = None, param_severity: List[str] = None, param_komodorUid: List[str] = None, param_resourceType: List[str] = None, param_createdFromEpoch: str = None, param_createdToEpoch: str = None, param_checkCategory: List[str] = None) -> Dict[str, Any]:
+async def get_health_risks(
+    param_pageSize: int,
+    param_offset: int,
+    param_impactGroupType: List[str],
+    param_checkType: List[str] = None,
+    param_status: List[str] = None,
+    param_clusterName: List[str] = None,
+    param_namespace: List[str] = None,
+    param_shortResourceNameSearchTerm: str = None,
+    param_shortResourceName: List[str] = None,
+    param_impactGroupId: List[str] = None,
+    param_severity: List[str] = None,
+    param_komodorUid: List[str] = None,
+    param_resourceType: List[str] = None,
+    param_createdFromEpoch: str = None,
+    param_createdToEpoch: str = None,
+    param_checkCategory: List[str] = None,
+) -> Dict[str, Any]:
     '''
     Get all the health risks.
 
     Args:
         param_pageSize (int): The number of results to return per page.
-        param_offset (int): The offset from the start of the list of results.
-        param_impactGroupType (List[str]): The types of impact groups to filter by.
-        param_checkType (List[str], optional): The types of checks to filter by. Defaults to None.
-        param_status (List[str], optional): The statuses to filter by. Defaults to None.
-        param_clusterName (List[str], optional): The cluster names to filter by. Defaults to None.
+        param_offset (int): The offset from the start of the results.
+        param_impactGroupType (List[str]): The type of impact group to filter by.
+        param_checkType (List[str], optional): The type of checks to filter by. Defaults to None.
+        param_status (List[str], optional): The status of the health risks to filter by. Defaults to None.
+        param_clusterName (List[str], optional): The names of clusters to filter by. Defaults to None.
         param_namespace (List[str], optional): The namespaces to filter by. Defaults to None.
-        param_shortResourceNameSearchTerm (str, optional): A search term for short resource names. Defaults to None.
-        param_shortResourceName (List[str], optional): The short resource names to filter by. Defaults to None.
-        param_impactGroupId (List[str], optional): The impact group IDs to filter by. Defaults to None.
-        param_severity (List[str], optional): The severities to filter by. Defaults to None.
+        param_shortResourceNameSearchTerm (str, optional): A search term for resource names using a "contains" approach. Defaults to None.
+        param_shortResourceName (List[str], optional): Specific resource names to filter by. Defaults to None.
+        param_impactGroupId (List[str], optional): The IDs of impact groups to filter by. Defaults to None.
+        param_severity (List[str], optional): The severity levels to filter by. Defaults to None.
         param_komodorUid (List[str], optional): The Komodor UIDs to filter by. Defaults to None.
-        param_resourceType (List[str], optional): The resource types to filter by. Defaults to None.
-        param_createdFromEpoch (str, optional): The start epoch time to filter by. Defaults to None.
-        param_createdToEpoch (str, optional): The end epoch time to filter by. Defaults to None.
-        param_checkCategory (List[str], optional): The check categories to filter by. Defaults to None.
+        param_resourceType (List[str], optional): The types of resources to filter by. Defaults to None.
+        param_createdFromEpoch (str, optional): The start epoch time to filter results from. Defaults to None.
+        param_createdToEpoch (str, optional): The end epoch time to filter results to. Defaults to None.
+        param_checkCategory (List[str], optional): The categories of checks to filter by. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing health risks data.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        get:
-          summary: Get all the health risks.
-          parameters:
-            - name: pageSize
-              in: query
-              required: true
-              schema:
-                type: integer
-            - name: offset
-              in: query
-              required: true
-              schema:
-                type: integer
-            - name: impactGroupType
-              in: query
-              required: true
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: checkType
-              in: query
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: status
-              in: query
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: clusterName
-              in: query
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: namespace
-              in: query
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: shortResourceNameSearchTerm
-              in: query
-              schema:
-                type: string
-            - name: shortResourceName
-              in: query
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: impactGroupId
-              in: query
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: severity
-              in: query
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: komodorUid
-              in: query
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: resourceType
-              in: query
-              schema:
-                type: array
-                items:
-                  type: string
-            - name: createdFromEpoch
-              in: query
-              schema:
-                type: string
-            - name: createdToEpoch
-              in: query
-              schema:
-                type: string
-            - name: checkCategory
-              in: query
-              schema:
-                type: array
-                items:
-                  type: string
-          responses:
-            '200':
-              description: Successful response
-              content:
-                application/json:
-                  schema:
-                    type: object
     '''
     logger.debug("Making GET request to /api/v2/health/risks")
+
     params = {}
-    data = None
-    
-
-    
-    params["pageSize"] = param_pageSize
-    
-
-    
-    params["offset"] = param_offset
-    
-
-    
-    params["impactGroupType"] = param_impactGroupType
-    
-
-    
-    params["checkType"] = param_checkType
-    
-
-    
-    params["status"] = param_status
-    
-
-    
-    params["clusterName"] = param_clusterName
-    
-
-    
-    params["namespace"] = param_namespace
-    
-
-    
-    params["shortResourceNameSearchTerm"] = param_shortResourceNameSearchTerm
-    
-
-    
-    params["shortResourceName"] = param_shortResourceName
-    
-
-    
-    params["impactGroupId"] = param_impactGroupId
-    
-
-    
-    params["severity"] = param_severity
-    
-
-    
-    params["komodorUid"] = param_komodorUid
-    
-
-    
-    params["resourceType"] = param_resourceType
-    
-
-    
-    params["createdFromEpoch"] = param_createdFromEpoch
-    
-
-    
-    params["createdToEpoch"] = param_createdToEpoch
-    
-
-    
-    params["checkCategory"] = param_checkCategory
-    
-
-
-    
     data = {}
 
-    
+    if param_pageSize is not None:
+        params["pageSize"] = str(param_pageSize).lower() if isinstance(param_pageSize, bool) else param_pageSize
 
-    
+    if param_offset is not None:
+        params["offset"] = str(param_offset).lower() if isinstance(param_offset, bool) else param_offset
 
-    
+    if param_checkType is not None:
+        params["checkType"] = str(param_checkType).lower() if isinstance(param_checkType, bool) else param_checkType
 
-    
+    if param_status is not None:
+        params["status"] = str(param_status).lower() if isinstance(param_status, bool) else param_status
 
-    
+    if param_clusterName is not None:
+        params["clusterName"] = (
+            str(param_clusterName).lower() if isinstance(param_clusterName, bool) else param_clusterName
+        )
 
-    
+    if param_namespace is not None:
+        params["namespace"] = str(param_namespace).lower() if isinstance(param_namespace, bool) else param_namespace
 
-    
+    if param_shortResourceNameSearchTerm is not None:
+        params["shortResourceNameSearchTerm"] = (
+            str(param_shortResourceNameSearchTerm).lower()
+            if isinstance(param_shortResourceNameSearchTerm, bool)
+            else param_shortResourceNameSearchTerm
+        )
 
-    
+    if param_shortResourceName is not None:
+        params["shortResourceName"] = (
+            str(param_shortResourceName).lower()
+            if isinstance(param_shortResourceName, bool)
+            else param_shortResourceName
+        )
 
-    
+    if param_impactGroupId is not None:
+        params["impactGroupId"] = (
+            str(param_impactGroupId).lower() if isinstance(param_impactGroupId, bool) else param_impactGroupId
+        )
 
-    
+    if param_impactGroupType is not None:
+        params["impactGroupType"] = (
+            str(param_impactGroupType).lower() if isinstance(param_impactGroupType, bool) else param_impactGroupType
+        )
 
-    
+    if param_severity is not None:
+        params["severity"] = str(param_severity).lower() if isinstance(param_severity, bool) else param_severity
 
-    
+    if param_komodorUid is not None:
+        params["komodorUid"] = str(param_komodorUid).lower() if isinstance(param_komodorUid, bool) else param_komodorUid
 
-    
+    if param_resourceType is not None:
+        params["resourceType"] = (
+            str(param_resourceType).lower() if isinstance(param_resourceType, bool) else param_resourceType
+        )
 
-    
+    if param_createdFromEpoch is not None:
+        params["createdFromEpoch"] = (
+            str(param_createdFromEpoch).lower() if isinstance(param_createdFromEpoch, bool) else param_createdFromEpoch
+        )
 
-    
+    if param_createdToEpoch is not None:
+        params["createdToEpoch"] = (
+            str(param_createdToEpoch).lower() if isinstance(param_createdToEpoch, bool) else param_createdToEpoch
+        )
 
-    
+    if param_checkCategory is not None:
+        params["checkCategory"] = (
+            str(param_checkCategory).lower() if isinstance(param_checkCategory, bool) else param_checkCategory
+        )
 
-    if not data:
-        data = None
-    success, response = await make_api_request(
-        "/api/v2/health/risks",
-        method="GET",
-        params=params,
-        data=data
-    )
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
+
+    success, response = await make_api_request("/api/v2/health/risks", method="GET", params=params, data=data)
+
     if not success:
         logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get('error', 'Request failed')}
+        return {"error": response.get("error", "Request failed")}
     return response

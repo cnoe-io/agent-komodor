@@ -1,148 +1,109 @@
-
 """Tools for /api/v2/cost/right-sizing/service operations"""
 
 import logging
 from typing import Dict, Any, List
 from mcp_komodor.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def getcostrightsizingperservice(param_optimizationStrategy: str, param_pageSize: int, param_filterBy: str = None, param_filterValueEquals: str = None, param_sortOrder: str = None, param_sortBy: str = None, param_clusterScope: List[str] = None) -> Dict[str, Any]:
+async def get_cost_right_sizing_per_service(
+    param_optimizationStrategy: str,
+    param_pageSize: int,
+    param_filterBy: str = None,
+    param_filterValueEquals: str = None,
+    param_sortOrder: str = None,
+    param_sortBy: str = None,
+    param_clusterScope: List[str] = None,
+) -> Dict[str, Any]:
     '''
     Get cost right-sizing recommendations per service.
 
     Args:
-        param_optimizationStrategy (str): The strategy to use for optimization, such as 'cost' or 'performance'.
-        param_pageSize (int): The number of results to return per page.
-        param_filterBy (str, optional): The field to filter results by. Defaults to None.
-        param_filterValueEquals (str, optional): The value to filter the specified field by. Defaults to None.
-        param_sortOrder (str, optional): The order to sort results by, either 'asc' or 'desc'. Defaults to None.
-        param_sortBy (str, optional): The field to sort results by. Defaults to None.
-        param_clusterScope (List[str], optional): A list of cluster identifiers to scope the results to. Defaults to None.
+        param_optimizationStrategy (str): The optimization strategy to use.
+        param_pageSize (int): The number of items to return per page.
+        param_filterBy (str, optional): The column to filter by for right-sizing recommendations. Defaults to None.
+        param_filterValueEquals (str, optional): The value to filter by. Defaults to None.
+        param_sortOrder (str, optional): The order of sorting for the cost allocation data. Defaults to None.
+        param_sortBy (str, optional): The column by which to sort the right-sizing data. Defaults to None.
+        param_clusterScope (List[str], optional): Filter by specific clusters. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the right-sizing recommendations.
+        Dict[str, Any]: The JSON response from the API call containing recommended CPU and memory request adjustments per service.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        get:
-          summary: Get cost right-sizing recommendations per service.
-          description: Get recommended CPU and memory request adjustments per service to optimize cost.
-          parameters:
-            - name: optimizationStrategy
-              in: query
-              required: true
-              schema:
-                type: string
-            - name: pageSize
-              in: query
-              required: true
-              schema:
-                type: integer
-            - name: filterBy
-              in: query
-              required: false
-              schema:
-                type: string
-            - name: filterValueEquals
-              in: query
-              required: false
-              schema:
-                type: string
-            - name: sortOrder
-              in: query
-              required: false
-              schema:
-                type: string
-            - name: sortBy
-              in: query
-              required: false
-              schema:
-                type: string
-            - name: clusterScope
-              in: query
-              required: false
-              schema:
-                type: array
-                items:
-                  type: string
-          responses:
-            '200':
-              description: Successful response with right-sizing recommendations.
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '400':
-              description: Bad request due to invalid parameters.
-            '500':
-              description: Internal server error.
     '''
     logger.debug("Making GET request to /api/v2/cost/right-sizing/service")
+
     params = {}
-    data = None
-    
-
-    
-    params["optimizationStrategy"] = param_optimizationStrategy
-    
-
-    
-    params["pageSize"] = param_pageSize
-    
-
-    
-    params["filterBy"] = param_filterBy
-    
-
-    
-    params["filterValueEquals"] = param_filterValueEquals
-    
-
-    
-    params["sortOrder"] = param_sortOrder
-    
-
-    
-    params["sortBy"] = param_sortBy
-    
-
-    
-    params["clusterScope"] = param_clusterScope
-    
-
-
-    
     data = {}
 
-    
+    if param_optimizationStrategy is not None:
+        params["optimizationStrategy"] = (
+            str(param_optimizationStrategy).lower()
+            if isinstance(param_optimizationStrategy, bool)
+            else param_optimizationStrategy
+        )
 
-    
+    if param_pageSize is not None:
+        params["pageSize"] = str(param_pageSize).lower() if isinstance(param_pageSize, bool) else param_pageSize
 
-    
+    if param_filterBy is not None:
+        params["filterBy"] = str(param_filterBy).lower() if isinstance(param_filterBy, bool) else param_filterBy
 
-    
+    if param_filterValueEquals is not None:
+        params["filterValueEquals"] = (
+            str(param_filterValueEquals).lower()
+            if isinstance(param_filterValueEquals, bool)
+            else param_filterValueEquals
+        )
 
-    
+    if param_sortOrder is not None:
+        params["sortOrder"] = str(param_sortOrder).lower() if isinstance(param_sortOrder, bool) else param_sortOrder
 
-    
+    if param_sortBy is not None:
+        params["sortBy"] = str(param_sortBy).lower() if isinstance(param_sortBy, bool) else param_sortBy
 
-    
+    if param_clusterScope is not None:
+        params["clusterScope"] = (
+            str(param_clusterScope).lower() if isinstance(param_clusterScope, bool) else param_clusterScope
+        )
 
-    if not data:
-        data = None
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
+
     success, response = await make_api_request(
-        "/api/v2/cost/right-sizing/service",
-        method="GET",
-        params=params,
-        data=data
+        "/api/v2/cost/right-sizing/service", method="GET", params=params, data=data
     )
+
     if not success:
         logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get('error', 'Request failed')}
+        return {"error": response.get("error", "Request failed")}
     return response
