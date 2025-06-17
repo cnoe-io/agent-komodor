@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any, List
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -55,22 +31,22 @@ async def get_health_risks(
     Get all the health risks.
 
     Args:
-        param_pageSize (int): The number of results to return per page.
-        param_offset (int): The offset from the start of the results.
+        param_pageSize (int): The number of items to return per page.
+        param_offset (int): The offset from the start of the list of items.
         param_impactGroupType (List[str]): The type of impact group to filter by.
         param_checkType (List[str], optional): The type of checks to filter by. Defaults to None.
         param_status (List[str], optional): The status of the health risks to filter by. Defaults to None.
-        param_clusterName (List[str], optional): The names of clusters to filter by. Defaults to None.
-        param_namespace (List[str], optional): The namespaces to filter by. Defaults to None.
+        param_clusterName (List[str], optional): The name of the cluster to filter by. Defaults to None.
+        param_namespace (List[str], optional): The namespace to filter by. Defaults to None.
         param_shortResourceNameSearchTerm (str, optional): A search term for resource names using a "contains" approach. Defaults to None.
         param_shortResourceName (List[str], optional): Specific resource names to filter by. Defaults to None.
-        param_impactGroupId (List[str], optional): The IDs of impact groups to filter by. Defaults to None.
-        param_severity (List[str], optional): The severity levels to filter by. Defaults to None.
-        param_komodorUid (List[str], optional): The Komodor UIDs to filter by. Defaults to None.
-        param_resourceType (List[str], optional): The types of resources to filter by. Defaults to None.
-        param_createdFromEpoch (str, optional): The start epoch time to filter results from. Defaults to None.
-        param_createdToEpoch (str, optional): The end epoch time to filter results to. Defaults to None.
-        param_checkCategory (List[str], optional): The categories of checks to filter by. Defaults to None.
+        param_impactGroupId (List[str], optional): The ID of the impact group to filter by. Defaults to None.
+        param_severity (List[str], optional): The severity level of the health risks to filter by. Defaults to None.
+        param_komodorUid (List[str], optional): The Komodor UID to filter by. Defaults to None.
+        param_resourceType (List[str], optional): The type of resource to filter by. Defaults to None.
+        param_createdFromEpoch (str, optional): The start epoch time to filter the creation date. Defaults to None.
+        param_createdToEpoch (str, optional): The end epoch time to filter the creation date. Defaults to None.
+        param_checkCategory (List[str], optional): The category of checks to filter by. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing health risks data.

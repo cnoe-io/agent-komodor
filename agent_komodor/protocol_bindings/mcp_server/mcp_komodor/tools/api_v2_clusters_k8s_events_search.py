@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested structure.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -35,15 +11,15 @@ logger = logging.getLogger("mcp_tools")
 
 async def post_api_v2_clusters_k8s_events_search(body: str) -> Dict[str, Any]:
     '''
-    Search for Kubernetes events within a cluster scope.
+    Search for Kubernetes events in cluster scope.
 
-    This function performs a search for Kubernetes events based on the provided criteria. The maximum time range for the search is 2 days. If no time range is specified, the default is the last 24 hours. The maximum time back for the search is 7 days.
+    Search for events based on the provided criteria. The maximum time range for the search is 2 days. If no time range is specified, the default is the last 24 hours. The maximum time back for the search is 7 days.
 
     Args:
-        body (str): The request body containing search criteria for Kubernetes events.
+        body (str): The request body containing the search criteria for Kubernetes events.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the search results.
 
     Raises:
         Exception: If the API request fails or returns an error.

@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any, List
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -53,18 +29,18 @@ async def get_api_v2_audit_log(
 
     Args:
         param_id (str, optional): Audit log id. Defaults to all ids if not provided.
-        param_userIds (List[str], optional): List of user IDs to filter the logs. Defaults to None.
-        param_actions (List[str], optional): List of actions to filter the logs. Defaults to None.
-        param_categories (List[str], optional): List of categories to filter the logs. Defaults to None.
-        param_operations (List[str], optional): List of operations to filter the logs. Defaults to None.
-        param_entityTypes (List[str], optional): List of entity types to filter the logs. Defaults to None.
-        param_entityName (str, optional): Name of the entity to filter the logs. Defaults to None.
-        param_startTime (str, optional): Start time for the logs query. Defaults to 8 hours ago if not provided. Ignored if response is CSV.
-        param_endTime (str, optional): End time for the logs query. Defaults to now if not provided. Ignored if response is CSV.
-        param_status (str, optional): Status to filter the logs. Defaults to all statuses if not provided.
-        param_page (int, optional): Page number for pagination. Defaults to 1 if not provided. Ignored if response is CSV.
-        param_pageSize (int, optional): Page size for pagination. Defaults to 20 if not provided. Ignored if response is CSV.
-        param_sort (str, optional): Sort order for the logs. Defaults to None.
+        param_userIds (List[str], optional): List of user IDs to filter the audit logs. Defaults to None.
+        param_actions (List[str], optional): List of actions to filter the audit logs. Defaults to None.
+        param_categories (List[str], optional): List of categories to filter the audit logs. Defaults to None.
+        param_operations (List[str], optional): List of operations to filter the audit logs. Defaults to None.
+        param_entityTypes (List[str], optional): List of entity types to filter the audit logs. Defaults to None.
+        param_entityName (str, optional): Name of the entity to filter the audit logs. Defaults to None.
+        param_startTime (str, optional): Start time for the audit logs query. Defaults to 8 hours ago if not provided. Ignored if the response is CSV.
+        param_endTime (str, optional): End time for the audit logs query. Defaults to now if not provided. Ignored if the response is CSV.
+        param_status (str, optional): Status to filter the audit logs. Defaults to all statuses if not provided.
+        param_page (int, optional): Page number for pagination. Defaults to 1 if not provided. Ignored if the response is CSV.
+        param_pageSize (int, optional): Page size for pagination. Defaults to 20 if not provided. Ignored if the response is CSV.
+        param_sort (str, optional): Sort order for the audit logs. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.

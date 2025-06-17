@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any, List
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -35,16 +11,16 @@ logger = logging.getLogger("mcp_tools")
 
 async def policies_controller_v1_get(path_id: str) -> Dict[str, Any]:
     '''
-    Fetches a policy by its UUID from the RBAC management API.
+    Fetches the details of a specific policy using its UUID.
 
     Args:
         path_id (str): The UUID of the policy to retrieve.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the policy details.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the policy details.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making GET request to /mgmt/v1/rbac/policies/{id}")
 
@@ -68,18 +44,18 @@ async def policies_controller_v1_update_policy(
     path_id: str, body_name: str, body_statements: List[str]
 ) -> Dict[str, Any]:
     '''
-    Updates a policy with the specified ID using the provided name and statements.
+    Updates a policy in the RBAC management system.
 
     Args:
         path_id (str): The UUID of the policy to be updated.
-        body_name (str): The new name for the policy.
-        body_statements (List[str]): A list of statements to be included in the policy.
+        body_name (str): The name of the policy as specified in the request body.
+        body_statements (List[str]): A list of statements associated with the policy as specified in the request body.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the updated policy details.
+        Dict[str, Any]: The JSON response from the API call, containing the updated policy details or an error message.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making PUT request to /mgmt/v1/rbac/policies/{id}")
 

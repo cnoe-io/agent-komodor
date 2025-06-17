@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any, List
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -46,8 +22,8 @@ async def events_controller_create_custom_event(
     Creates a custom event in the events controller.
 
     Args:
-        body_eventType (str): The type of event you'd like to create, limited to 30 characters.
-        body_summary (str): Description of the event.
+        body_eventType (str): Required. The type of event you'd like to create, limited to 30 characters.
+        body_summary (str): Required. Description of the event.
         body_scope_clusters (List[str], optional): List of cluster identifiers. Defaults to None.
         body_scope_servicesNames (List[str], optional): List of service names. Defaults to None.
         body_scope_namespaces (List[str], optional): List of namespaces. Defaults to None.

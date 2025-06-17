@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -35,17 +11,17 @@ logger = logging.getLogger("mcp_tools")
 
 async def rbac_role_policies_controller_v1_post(body_roleId: str, body_policyId: str) -> Dict[str, Any]:
     '''
-    Creates a new association between a role and a policy in the RBAC system.
+    Creates a new role-policy association in the RBAC system.
 
     Args:
-        body_roleId (str): The ID of the role to associate with the policy.
-        body_policyId (str): The ID of the policy to associate with the role.
+        body_roleId (str): The ID of the role to associate with a policy.
+        body_policyId (str): The ID of the policy to associate with a role.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing details of the association.
+        Dict[str, Any]: The JSON response from the API call, containing details of the created association.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making POST request to /mgmt/v1/rbac/roles/policies")
 

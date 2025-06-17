@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any, List
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -48,7 +24,7 @@ async def get_cost_right_sizing_per_service(
     Args:
         param_optimizationStrategy (str): The optimization strategy to use.
         param_pageSize (int): The number of items to return per page.
-        param_filterBy (str, optional): The column to filter by for right-sizing recommendations. Defaults to None.
+        param_filterBy (str, optional): The column to filter by for right-sizing. Defaults to None.
         param_filterValueEquals (str, optional): The value to filter by. Defaults to None.
         param_sortOrder (str, optional): The order of sorting for the cost allocation data. Defaults to None.
         param_sortBy (str, optional): The column by which to sort the right-sizing data. Defaults to None.

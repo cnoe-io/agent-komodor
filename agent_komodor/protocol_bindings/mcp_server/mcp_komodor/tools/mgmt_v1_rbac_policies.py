@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any, List
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -44,12 +20,11 @@ async def policies_controller_v1_get_all() -> Dict[str, Any]:
         None
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which
-        includes details of all RBAC policies.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes
+        details of all RBAC policies.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised
-        with the error details.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making GET request to /mgmt/v1/rbac/policies")
 
@@ -73,10 +48,10 @@ async def policies_controller_v1_post(body_name: str, body_statements: List[str]
 
     Args:
         body_name (str): The name of the policy to be created.
-        body_statements (List[str]): A list of statements defining the policy rules.
+        body_statements (List[str]): A list of statements that define the policy rules.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the details of the created policy or an error message.
+        Dict[str, Any]: The JSON response from the API call, which includes details of the created policy or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error, an exception is raised with the error details.
@@ -103,7 +78,7 @@ async def policies_controller_v1_post(body_name: str, body_statements: List[str]
 
 async def policies_controller_v1_delete(body_id: str) -> Dict[str, Any]:
     '''
-    Deletes a policy by its ID.
+    Deletes a policy by its ID using the RBAC policies API.
 
     Args:
         body_id (str): The ID of the policy to be deleted.
@@ -112,7 +87,7 @@ async def policies_controller_v1_delete(body_id: str) -> Dict[str, Any]:
         Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making DELETE request to /mgmt/v1/rbac/policies")
 

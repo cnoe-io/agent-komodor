@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any, List
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -74,18 +50,20 @@ async def put_api_v2_rbac_roles_id_or_name(
     '''
     Update a role by its ID or name.
 
+    This function sends an asynchronous PUT request to update a role in the RBAC system using either the role's ID or name. The role's attributes such as name, default status, associated policy IDs, and policy names can be updated.
+
     Args:
-        path_id_or_name (str): The ID or name of the role to update.
+        path_id_or_name (str): The ID or name of the role to be updated.
         body_name (str, optional): The new name for the role. Defaults to None.
-        body_isDefault (bool, optional): Indicates if the role is default. Defaults to None.
-        body_policyIds (List[str], optional): List of policy IDs associated with the role. Defaults to None.
-        body_policyNames (List[str], optional): List of policy names associated with the role. Defaults to None.
+        body_isDefault (bool, optional): Indicates whether the role is default. Defaults to None.
+        body_policyIds (List[str], optional): A list of policy IDs to associate with the role. Defaults to None.
+        body_policyNames (List[str], optional): A list of policy names to associate with the role. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the updated role information.
+        Dict[str, Any]: The JSON response from the API call, containing the updated role information or an error message.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making PUT request to /api/v2/rbac/roles/{id_or_name}")
 
@@ -117,13 +95,11 @@ async def delete_api_v2_rbac_roles_id_or_name(path_id_or_name: str) -> Dict[str,
     '''
     Delete a role by its ID or name.
 
-    This function sends an asynchronous DELETE request to the API to remove a role specified by its ID or name.
-
     Args:
         path_id_or_name (str): The ID or name of the role to be deleted.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, which includes the result of the deletion operation.
+        Dict[str, Any]: The JSON response from the API call, which includes the status of the deletion operation.
 
     Raises:
         Exception: If the API request fails or returns an error, an exception is raised with the error details.

@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any, List
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -35,20 +11,15 @@ logger = logging.getLogger("mcp_tools")
 
 async def monitors_controller_v1_get(path_id: str) -> Dict[str, Any]:
     '''
-    Deprecated: Use `/api/v2/realtime-monitors/config` instead.
+    Fetches the configuration of a monitor by its UUID.
 
-    This function makes an asynchronous GET request to the deprecated
-    `/mgmt/v1/monitors/config/{id}` endpoint to retrieve monitor configuration
-    details. It is recommended to use the `/api/v2/realtime-monitors/config` API
-    for new implementations due to improved validation and error handling.
+    This function is deprecated. Please use `/api/v2/realtime-monitors/config` API instead for new implementations and better validation and error handling.
 
     Args:
-        path_id (str): The UUID of the monitor whose configuration is to be retrieved.
+        path_id (str): UUID of the monitor to retrieve the configuration for.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call.
-        If the request fails, the dictionary will contain an "error" key with the
-        error message.
+        Dict[str, Any]: The JSON response from the API call containing the monitor configuration.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -92,25 +63,27 @@ async def monitors_controller_v1_put(
     '''
     Deprecated: Use `/api/v2/realtime-monitors/config` instead.
 
-    This function makes a PUT request to update monitor configurations. It is deprecated and should be replaced with `/api/v2/realtime-monitors/config` for new implementations.
+    This function makes a PUT request to update the configuration of a monitor.
+    It is recommended to use the newer `/api/v2/realtime-monitors/config` API for
+    better validation and error handling.
 
     Args:
-        path_id (str): UUID of the monitor.
+        path_id (str): UUID of the monitor to be updated.
         body_name (str): Name of the monitor.
         body_type (str): Type of the monitor.
         body_active (bool): Indicates if the monitor is active.
         body_sensors (List[str]): List of sensors associated with the monitor.
         body_isDeleted (bool): Indicates if the monitor is marked as deleted.
         body_variables_duration (float, optional): Duration variable for the monitor. Defaults to None.
-        body_variables_minAvailable (str, optional): Minimum availability variable for the monitor. Defaults to None.
-        body_variables_categories (List[str], optional): Categories for filtering in "Availability" monitor type. Defaults to None.
+        body_variables_minAvailable (str, optional): Minimum available variable for the monitor. Defaults to None.
+        body_variables_categories (List[str], optional): Categories to monitor for "Availability" monitor type. Defaults to None.
         body_variables_cronJobCondition (str, optional): Cron job condition variable for the monitor. Defaults to None.
-        body_variables_resolveAfter (float, optional): Time after which issues are resolved. Defaults to None.
-        body_variables_ignoreAfter (float, optional): Time after which issues are ignored. Defaults to None.
+        body_variables_resolveAfter (float, optional): Time after which the monitor resolves. Defaults to None.
+        body_variables_ignoreAfter (float, optional): Time after which the monitor ignores. Defaults to None.
         body_variables_reasons (List[str], optional): Reasons associated with the monitor. Defaults to None.
         body_variables_nodeCreationThreshold (str, optional): Node creation threshold variable for the monitor. Defaults to None.
         body_sinks (str, optional): Sinks associated with the monitor. Defaults to None.
-        body_sinksOptions_notifyOn (List[str], optional): Notification categories for the monitor. Defaults to None.
+        body_sinksOptions_notifyOn (List[str], optional): Categories for notifications. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
@@ -168,15 +141,15 @@ async def monitors_controller_v1_put(
 
 async def monitors_controller_v1_delete(path_id: str) -> Dict[str, Any]:
     '''
-    Deprecated: Use `/api/v2/realtime-monitors/config` instead.
+    Deletes a monitor configuration using its UUID.
 
-    This function sends a DELETE request to remove a monitor configuration identified by the given UUID. It is recommended to use the newer `/api/v2/realtime-monitors/config` API for improved validation and error handling.
+    This function is deprecated. Please use the `/api/v2/realtime-monitors/config` API for new implementations, which offers better validation and error handling.
 
     Args:
-        path_id (str): UUID of the monitor to be deleted.
+        path_id (str): The UUID of the monitor to be deleted.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, which includes the status of the deletion request.
+        Dict[str, Any]: The JSON response from the API call, which includes the result of the delete operation.
 
     Raises:
         Exception: If the API request fails or returns an error, an exception is raised with the error details.
