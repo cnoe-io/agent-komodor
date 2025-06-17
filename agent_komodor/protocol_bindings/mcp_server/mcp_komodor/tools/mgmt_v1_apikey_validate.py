@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -35,16 +11,23 @@ logger = logging.getLogger("mcp_tools")
 
 async def api_keys_controller_validate() -> Dict[str, Any]:
     '''
-    Validates API keys by making a GET request to the /mgmt/v1/apikey/validate endpoint.
+    Validates the API key by making a GET request to the API endpoint.
+
+    This function sends a request to the '/mgmt/v1/apikey/validate' endpoint to
+    validate the current API key. It constructs the necessary parameters and data
+    for the request and handles the response.
 
     Args:
         None
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing validation results or error information.
+        Dict[str, Any]: The JSON response from the API call, which includes
+        validation details of the API key. If the request fails, it returns a
+        dictionary with an error message.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error, an exception is
+        raised with the error details.
     '''
     logger.debug("Making GET request to /mgmt/v1/apikey/validate")
 

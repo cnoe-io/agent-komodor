@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any, List
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -51,13 +27,13 @@ async def post_api_v2_services_search(
         body_scope_namespaces (List[str], optional): A list of namespaces within the cluster. Defaults to None.
         body_kind (List[str], optional): The type of the service. Defaults to None.
         body_status (str, optional): The health status of the service. Defaults to None.
-        body_issueReasonCategory (List[str], optional): OpenAPI parameter corresponding to 'body_issueReasonCategory'. Defaults to None.
+        body_issueReasonCategory (List[str], optional): Categories of issues affecting the service. Defaults to None.
         body_latestDeployStatus (str, optional): The status of the latest deployment. Defaults to None.
         body_pagination_pageSize (int, optional): The number of results returned per page. Defaults to None.
-        body_pagination_page (int, optional): The page number. Defaults to None.
+        body_pagination_page (int, optional): The page number to retrieve. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the search results.
 
     Raises:
         Exception: If the API request fails or returns an error.

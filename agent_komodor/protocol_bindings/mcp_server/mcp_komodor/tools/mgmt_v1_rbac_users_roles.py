@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -37,18 +13,18 @@ async def rbac_user_roles_controller_v1_post(
     body_userId: str, body_roleId: str, body_expiration: str
 ) -> Dict[str, Any]:
     '''
-    Creates a new user role assignment in the RBAC system.
+    Assigns a role to a user with an optional expiration date.
 
     Args:
-        body_userId (str): The user ID for whom the role is being assigned.
-        body_roleId (str): The role ID that is being assigned to the user.
-        body_expiration (str): The expiration date for the role assignment in ISO 8601 format.
+        body_userId (str): The ID of the user to whom the role will be assigned.
+        body_roleId (str): The ID of the role to be assigned to the user.
+        body_expiration (str): The expiration date for the role assignment in ISO 8601 format. Optional.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing details of the role assignment.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the role assignment.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making POST request to /mgmt/v1/rbac/users/roles")
 
@@ -87,7 +63,7 @@ async def rbac_user_roles_controller_v1_delete(
         Dict[str, Any]: The JSON response from the API call, containing the result of the deletion operation.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making DELETE request to /mgmt/v1/rbac/users/roles")
 

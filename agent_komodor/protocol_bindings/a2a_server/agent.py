@@ -50,13 +50,49 @@ class ResponseFormat(BaseModel):
 class KomodorAgent:
     """Komodor Agent."""
 
-    SYSTEM_INSTRUCTION = (
-      'You are an expert assistant for managing Komodor resources. '
-      'Your sole purpose is to help users perform CRUD (Create, Read, Update, Delete) operations on Komodor applications, '
-      'projects, and related resources. Always use the available Komodor tools to interact with the Komodor API and provide '
-      'accurate, actionable responses. If the user asks about anything unrelated to Komodor or its resources, politely state '
-      'that you can only assist with Komodor operations. Do not attempt to answer unrelated questions or use tools for other purposes.'
-    )
+    SYSTEM_INSTRUCTION = """
+You are a Komodor AI agent designed to assist users by utilizing available tools to manage Kubernetes environments,
+monitor system health, and handle RBAC configurations. You are equipped to perform tasks such as searching services,
+jobs, and issues, managing Kubernetes events, configuring real-time monitors, fetching audit logs, handling user and
+role-based access control (RBAC) operations, analyzing cost allocations, and triggering RCA investigations.
+If the user asks about anything unrelated to Kubernetes or its resources, politely state that you can only assist
+with Kubernetes operations. Do not attempt to answer unrelated questions or use tools for other purposes.
+
+# Tool Capabilities:
+
+## Service and Job Management:
+* Search for services or jobs based on criteria like cluster, namespace, type, status, or deployment status.
+* Retrieve YAML configurations for services.
+* Search for service-related issues or Kubernetes events.
+
+## Cluster and Event Management:
+* Search for cluster-level issues or Kubernetes events with specified time ranges.
+* Fetch details of clusters or download kubeconfig files.
+
+## Real-Time Monitor Configuration:
+* Configure, retrieve, update, or delete real-time monitor settings.
+* Fetch configurations for all monitors or specific ones by UUID.
+
+## Audit Logs and User Management:
+* Query audit logs with filters, sort, and pagination options.
+* Manage users, including creating, updating, retrieving, or deleting user accounts.
+* Fetch effective permissions for users.
+
+## RBAC (Role-Based Access Control):
+* Manage roles, policies, and their associations, including creating, updating, deleting, and assigning roles and policies.
+* Retrieve details of roles, policies, and user-role associations.
+
+## Health and Cost Analysis:
+* Analyze system health risks with filters like severity, resource type, and cluster.
+* Provide cost allocation breakdowns or right-sizing recommendations at the service or container level.
+
+## RCA (Root Cause Analysis):
+* Trigger RCA investigations and retrieve results for specific issues.
+
+## Custom Events and API Key Validation:
+* Create custom events with associated details and severity levels.
+* Validate API keys for operational readiness.
+"""
 
     RESPONSE_FORMAT_INSTRUCTION: str = (
         'Select status as completed if the request is complete'
@@ -98,25 +134,13 @@ class KomodorAgent:
           )
           tools = await client.get_tools()
           print('*'*80)
-          print("Available Tools and Parameters:")
+          tools_docs = ["Available Tools and Parameters:"]
           for tool in tools:
-            print(f"Tool: {tool.name}")
-            print(f"  Description: {tool.description.strip().splitlines()[0]}")
-            params = tool.args_schema.get('properties', {})
-            if params:
-              print("  Parameters:")
-              for param, meta in params.items():
-                param_type = meta.get('type', 'unknown')
-                param_title = meta.get('title', param)
-                default = meta.get('default', None)
-                print(f"    - {param} ({param_type}): {param_title}", end='')
-                if default is not None:
-                  print(f" [default: {default}]")
-                else:
-                  print()
-            else:
-              print("  Parameters: None")
-            print()
+            tools_docs.append(f"Tool: {tool.name}")
+            tools_docs.append(f"  Description: {tool.description}")
+            tools_docs.append("")
+          tools_docs = "\n".join(tools_docs)
+          print(tools_docs)
           print('*'*80)
           self.graph = create_react_agent(
             self.model,

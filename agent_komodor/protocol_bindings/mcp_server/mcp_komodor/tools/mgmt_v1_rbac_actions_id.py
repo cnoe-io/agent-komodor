@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any, List
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -68,18 +44,18 @@ async def actions_controller_v1_update(
     path_id: str, body_description: str, body_k8sRuleset: List[str]
 ) -> Dict[str, Any]:
     '''
-    Updates the action controller for a specific policy using the provided description and Kubernetes ruleset.
+    Updates an action in the RBAC system with the specified details.
 
     Args:
-        path_id (str): The UUID of the policy to be updated.
-        body_description (str): The description of the policy to be updated.
-        body_k8sRuleset (List[str]): A list of Kubernetes rulesets associated with the policy.
+        path_id (str): The UUID of the policy to update.
+        body_description (str): The description of the action to be updated.
+        body_k8sRuleset (List[str]): The Kubernetes ruleset associated with the action.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the updated policy details.
+        Dict[str, Any]: The JSON response from the API call, containing the updated action details.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making PUT request to /mgmt/v1/rbac/actions/{id}")
 

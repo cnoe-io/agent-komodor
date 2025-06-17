@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -37,11 +13,11 @@ async def get_api_v2_users(
     param_displayName: str = None, param_email: str = None, param_isDeleted: bool = False
 ) -> Dict[str, Any]:
     '''
-    Get Users from the API v2 endpoint.
+    Get Users.
 
     Args:
-        param_displayName (str, optional): The display name of the user to filter the results. Defaults to None.
-        param_email (str, optional): The email of the user to filter the results. Defaults to None.
+        param_displayName (str, optional): The display name of the user to filter by. Defaults to None.
+        param_email (str, optional): The email of the user to filter by. Defaults to None.
         param_isDeleted (bool, optional): Filter users based on their deletion status. If True, only deleted users are returned. If False, only non-deleted users are returned. Defaults to False.
 
     Returns:
@@ -89,7 +65,7 @@ async def post_api_v2_users(
         body_restoreIfDeleted (bool, optional): Flag indicating whether to restore the user if they were previously marked as deleted. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing details of the created user or an error message.
+        Dict[str, Any]: The JSON response from the API call, containing user details or error information.
 
     Raises:
         Exception: If the API request fails or returns an error.

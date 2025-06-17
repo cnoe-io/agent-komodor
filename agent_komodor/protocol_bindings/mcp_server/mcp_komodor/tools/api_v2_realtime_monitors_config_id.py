@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any, List
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -83,12 +59,12 @@ async def put_api_v2_realtime_monitors_config_id(
         body_type (str): Type of the monitor.
         body_name (str, optional): Name of the monitor. Defaults to None.
         body_sinks (Dict[str, Any], optional): Configuration for data sinks. Defaults to None.
-        body_active (bool, optional): Activation status of the monitor. Defaults to None.
+        body_active (bool, optional): Indicates if the monitor is active. Defaults to None.
         body_variables (Dict[str, Any], optional): Variables associated with the monitor. Defaults to None.
         body_sinksOptions_notifyOn (List[str], optional): Notification options for sinks. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the updated monitor configuration.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -127,16 +103,16 @@ async def put_api_v2_realtime_monitors_config_id(
 
 async def delete_api_v2_realtime_monitors_config_id(path_id: str) -> Dict[str, Any]:
     '''
-    Deletes a real-time monitor configuration by its UUID.
+    Deletes a realtime monitor configuration by its UUID.
 
     Args:
         path_id (str): The UUID of the monitor to be deleted.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the deletion operation.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making DELETE request to /api/v2/realtime-monitors/config/{id}")
 

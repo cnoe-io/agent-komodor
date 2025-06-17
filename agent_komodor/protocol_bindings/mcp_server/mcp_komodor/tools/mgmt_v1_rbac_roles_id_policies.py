@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -41,10 +17,10 @@ async def rbac_role_policies_controller_v1_get(path_id: str) -> Dict[str, Any]:
         path_id (str): The UUID of the role for which policies are being retrieved.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the policies associated with the specified role.
+        Dict[str, Any]: The JSON response from the API call containing the policies associated with the specified role.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with details of the failure.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making GET request to /mgmt/v1/rbac/roles/{id}/policies")
 

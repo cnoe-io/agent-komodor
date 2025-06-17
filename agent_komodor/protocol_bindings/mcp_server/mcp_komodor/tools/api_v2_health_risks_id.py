@@ -2,31 +2,7 @@
 
 import logging
 from typing import Dict, Any
-from mcp_komodor.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested structure.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_komodor.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -69,8 +45,8 @@ async def update_health_risk_status(path_id: str, body_status: str = None) -> Di
     Update the status of a health risk.
 
     Args:
-        path_id (str): The identifier for the health risk path.
-        body_status (str, optional): The status to update for the health risk. Defaults to None.
+        path_id (str): The identifier for the health risk to be updated.
+        body_status (str, optional): The new status to be set for the health risk. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call, containing the updated health risk status.
