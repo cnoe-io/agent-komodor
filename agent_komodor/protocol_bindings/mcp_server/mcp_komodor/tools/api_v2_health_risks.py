@@ -12,7 +12,7 @@ logger = logging.getLogger("mcp_tools")
 async def get_health_risks(
     param_pageSize: int,
     param_offset: int,
-    param_impactGroupType: List[str],
+    param_impactGroupType: List[str] = ["static"],
     param_checkType: List[str] = None,
     param_status: List[str] = None,
     param_clusterName: List[str] = None,
@@ -33,7 +33,7 @@ async def get_health_risks(
     Args:
         param_pageSize (int): The number of items to return per page.
         param_offset (int): The offset from the start of the list of items.
-        param_impactGroupType (List[str]): The type of impact group to filter by.
+        param_impactGroupType (List[str]): The type of impact group to filter by. Defaults to ["static"].
         param_checkType (List[str], optional): The type of checks to filter by. Defaults to None.
         param_status (List[str], optional): The status of the health risks to filter by. Defaults to None.
         param_clusterName (List[str], optional): The name of the cluster to filter by. Defaults to None.
